@@ -1,7 +1,7 @@
 package p_logger
 
 import (
-	"gitee.com/pefish/p-go-application"
+	"github.com/pefish/go-application"
 )
 
 type LoggerClass struct {

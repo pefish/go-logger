@@ -1,7 +1,7 @@
 package p_logger
 
 import (
-	"gitee.com/pefish/p-go-reflect"
+	"github.com/pefish/go-reflect"
 )
 
 type BaseLogger struct {
