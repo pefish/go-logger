@@ -1,4 +1,4 @@
-package p_logger
+package go_logger
 
 import (
 	"github.com/pefish/go-application"

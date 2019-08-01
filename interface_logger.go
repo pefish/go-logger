@@ -1,4 +1,4 @@
-package p_logger
+package go_logger
 
 type InterfaceLogger interface {
 	Init(name string, debug bool)
