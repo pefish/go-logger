@@ -12,7 +12,7 @@ var Logger = &LoggerClass{}
 
 func (this *LoggerClass) Init(logger InterfaceLogger, name string) {
 	this.logger = logger
-	this.logger.Init(name, p_application.Application.Debug)
+	this.logger.Init(name, go_application.Application.Debug)
 }
 
 func (this *LoggerClass) Debug(args ...interface{}) {

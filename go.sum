@@ -4,6 +4,7 @@ github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGi
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/pefish/go-application v0.0.2 h1:8rezZUCiqW2f9gEkV0A1ZVLi8qER0yPHuxV1C6FJ6t4=
 github.com/pefish/go-application v0.0.2/go.mod h1:bIM667i1fBpkJxZWE0lTbYs/FW4O9YgnW5gj4sy33ko=
+github.com/pefish/go-application v0.1.0/go.mod h1:bIM667i1fBpkJxZWE0lTbYs/FW4O9YgnW5gj4sy33ko=
 github.com/pefish/go-reflect v0.0.1 h1:5IyuKC2ChCFuJee1gl4dQkDfsrHRUR6knfwuz8xbhks=
 github.com/pefish/go-reflect v0.0.1/go.mod h1:lv3gz/Zh2FsqCq8jqzdCgYpoM41AjE90HtknRbkXhjQ=
 github.com/pefish/go-reflect v0.0.3/go.mod h1:lv3gz/Zh2FsqCq8jqzdCgYpoM41AjE90HtknRbkXhjQ=

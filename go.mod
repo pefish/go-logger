@@ -1,7 +1,7 @@
 module github.com/pefish/go-logger
 
 require (
-	github.com/pefish/go-application v0.0.2
+	github.com/pefish/go-application v0.1.0
 	github.com/pefish/go-reflect v0.0.3
 	github.com/pefish/log4go v1.0.7
 	github.com/sirupsen/logrus v1.3.0
