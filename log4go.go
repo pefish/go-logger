@@ -27,7 +27,7 @@ func (this *Log4goClass) Init(name string, level string) {
 	sl.AddFilter(`console`, myLevel, log4go.NewConsoleLogWriter())
 	logfile := os.Getenv(`GO_LOG`)
 	if logfile != `` {
-		logWriter := log4go.NewFileLogWriter(logfile + fmt.Sprintf(`/%s.log`, name), true, true)
+		logWriter := log4go.NewFileLogWriter(logfile+fmt.Sprintf(`/%s.log`, name), true, true)
 		if logWriter == nil {
 			panic(errors.New(`GO_LOG config error`))
 		}
@@ -42,22 +42,34 @@ func (this *Log4goClass) Close() {
 	}
 }
 
-
 func (this *Log4goClass) Debug(args ...interface{}) {
 	this.logger.DebugFull(`%s`, this.FormatOutput(args...))
 }
 
-
+func (this *Log4goClass) DebugF(format string, args ...interface{}) {
+	this.logger.DebugFull(format, args...)
+}
 
 func (this *Log4goClass) Info(args ...interface{}) {
 	this.logger.InfoFull(`%s`, this.FormatOutput(args...))
+}
+
+func (this *Log4goClass) InfoF(format string, args ...interface{}) {
+	this.logger.InfoFull(format, args...)
 }
 
 func (this *Log4goClass) Warn(args ...interface{}) {
 	this.logger.WarnFull(`%s`, this.FormatOutput(args...))
 }
 
+func (this *Log4goClass) WarnF(format string, args ...interface{}) {
+	this.logger.WarnFull(format, args...)
+}
+
 func (this *Log4goClass) Error(args ...interface{}) {
 	this.logger.ErrorFull(`%s`, this.FormatOutput(args...))
 }
 
+func (this *Log4goClass) ErrorF(format string, args ...interface{}) {
+	this.logger.ErrorFull(format, args...)
+}

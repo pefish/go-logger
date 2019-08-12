@@ -39,11 +39,25 @@ func (this *LoggerClass) Debug(args ...interface{}) {
 	this.logger.Debug(args...)
 }
 
+func (this *LoggerClass) DebugF(format string, args ...interface{}) {
+	if this.logger == nil {
+		this.Init(&Log4goClass{}, `default`, `info`)
+	}
+	this.logger.DebugF(format, args...)
+}
+
 func (this *LoggerClass) Info(args ...interface{}) {
 	if this.logger == nil {
 		this.Init(&Log4goClass{}, `default`, `info`)
 	}
 	this.logger.Info(args...)
+}
+
+func (this *LoggerClass) InfoF(format string, args ...interface{}) {
+	if this.logger == nil {
+		this.Init(&Log4goClass{}, `default`, `info`)
+	}
+	this.logger.InfoF(format, args...)
 }
 
 func (this *LoggerClass) Warn(args ...interface{}) {
@@ -53,9 +67,23 @@ func (this *LoggerClass) Warn(args ...interface{}) {
 	this.logger.Warn(args...)
 }
 
+func (this *LoggerClass) WarnF(format string, args ...interface{}) {
+	if this.logger == nil {
+		this.Init(&Log4goClass{}, `default`, `info`)
+	}
+	this.logger.WarnF(format, args...)
+}
+
 func (this *LoggerClass) Error(args ...interface{}) {
 	if this.logger == nil {
 		this.Init(&Log4goClass{}, `default`, `info`)
 	}
 	this.logger.Error(args...)
+}
+
+func (this *LoggerClass) ErrorF(format string, args ...interface{}) {
+	if this.logger == nil {
+		this.Init(&Log4goClass{}, `default`, `info`)
+	}
+	this.logger.ErrorF(format, args...)
 }

@@ -52,7 +52,15 @@ func (this *LogrusClass) Debug(args ...interface{}) {
 	this.logger.Debugln(this.FormatOutput(args...))
 }
 
+func (this *LogrusClass) DebugF(format string, args ...interface{}) {
+	this.logger.Debugln(this.FormatOutput(args...))
+}
+
 func (this *LogrusClass) Info(args ...interface{}) {
+	this.logger.Infoln(this.FormatOutput(args...))
+}
+
+func (this *LogrusClass) InfoF(format string, args ...interface{}) {
 	this.logger.Infoln(this.FormatOutput(args...))
 }
 
@@ -60,7 +68,15 @@ func (this *LogrusClass) Warn(args ...interface{}) {
 	this.logger.Warnln(this.FormatOutput(args...))
 }
 
+func (this *LogrusClass) WarnF(format string, args ...interface{}) {
+	this.logger.Warnln(this.FormatOutput(args...))
+}
+
 func (this *LogrusClass) Error(args ...interface{}) {
+	this.logger.Errorln(this.FormatOutput(args...))
+}
+
+func (this *LogrusClass) ErrorF(format string, args ...interface{}) {
 	this.logger.Errorln(this.FormatOutput(args...))
 }
 
