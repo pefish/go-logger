@@ -17,7 +17,6 @@ func (this *Log4goClass) Init(name string, level string) {
 	myLevel := log4go.INFO
 	if level == `debug` {
 		myLevel = log4go.DEBUG
-		sl.AddFilter(`console`, myLevel, log4go.NewConsoleLogWriter())
 	} else if level == `info` {
 		myLevel = log4go.INFO
 	} else if level == `warn` {
@@ -25,7 +24,7 @@ func (this *Log4goClass) Init(name string, level string) {
 	} else if level == `error` {
 		myLevel = log4go.ERROR
 	}
-
+	sl.AddFilter(`console`, myLevel, log4go.NewConsoleLogWriter())
 	logfile := os.Getenv(`GO_LOG`)
 	if logfile != `` {
 		logWriter := log4go.NewFileLogWriter(logfile + fmt.Sprintf(`/%s.log`, name), true, true)
