@@ -1,7 +1,7 @@
 package go_logger
 
 type InterfaceLogger interface {
-	Init(name string, debug bool)
+	Init(name string, level string)
 	Close()
 
 	Debug(args ...interface{})

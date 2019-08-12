@@ -17,14 +17,20 @@ type LogrusClass struct {
 	logger *logrus.Entry
 }
 
-func (this *LogrusClass) Init(name string, debug bool) {
+func (this *LogrusClass) Init(name string, level string) {
 	logrus.SetFormatter(&FluentdFormatter{})
 	logrus.SetOutput(os.Stdout)
-	level := logrus.InfoLevel
-	if debug {
-		level = logrus.DebugLevel
+	myLevel := logrus.InfoLevel
+	if level == `debug` {
+		myLevel = logrus.DebugLevel
+	} else if level == `info` {
+		myLevel = logrus.InfoLevel
+	} else if level == `warn` {
+		myLevel = logrus.WarnLevel
+	} else if level == `error` {
+		myLevel = logrus.ErrorLevel
 	}
-	logrus.SetLevel(level)
+	logrus.SetLevel(myLevel)
 
 	logrus.AddHook(Hook{
 		mu:       &sync.Mutex{},

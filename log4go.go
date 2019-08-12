@@ -12,12 +12,18 @@ type Log4goClass struct {
 	logger *log4go.Logger
 }
 
-func (this *Log4goClass) Init(name string, debug bool) {
+func (this *Log4goClass) Init(name string, level string) {
 	sl := make(log4go.Logger)
-	level := log4go.INFO
-	if debug {
-		level = log4go.DEBUG
-		sl.AddFilter(`console`, level, log4go.NewConsoleLogWriter())
+	myLevel := log4go.INFO
+	if level == `debug` {
+		myLevel = log4go.DEBUG
+		sl.AddFilter(`console`, myLevel, log4go.NewConsoleLogWriter())
+	} else if level == `info` {
+		myLevel = log4go.INFO
+	} else if level == `warn` {
+		myLevel = log4go.WARNING
+	} else if level == `error` {
+		myLevel = log4go.ERROR
 	}
 
 	logfile := os.Getenv(`GO_LOG`)
@@ -26,7 +32,7 @@ func (this *Log4goClass) Init(name string, debug bool) {
 		if logWriter == nil {
 			panic(errors.New(`GO_LOG config error`))
 		}
-		sl.AddFilter("file", level, logWriter)
+		sl.AddFilter("file", myLevel, logWriter)
 	}
 	this.logger = &sl
 }
@@ -41,6 +47,8 @@ func (this *Log4goClass) Close() {
 func (this *Log4goClass) Debug(args ...interface{}) {
 	this.logger.DebugFull(`%s`, this.FormatOutput(args...))
 }
+
+
 
 func (this *Log4goClass) Info(args ...interface{}) {
 	this.logger.InfoFull(`%s`, this.FormatOutput(args...))
