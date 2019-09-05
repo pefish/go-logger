@@ -46,6 +46,14 @@ func (this *LoggerClass) DebugF(format string, args ...interface{}) {
 	this.logger.DebugF(format, args...)
 }
 
+func (this *LoggerClass) Print(args ...interface{}) {
+	this.Info(args)
+}
+
+func (this *LoggerClass) Println(args ...interface{}) {
+	this.Info(args)
+}
+
 func (this *LoggerClass) Info(args ...interface{}) {
 	if this.logger == nil {
 		this.Init(&Log4goClass{}, `default`, `info`)
@@ -53,6 +61,9 @@ func (this *LoggerClass) Info(args ...interface{}) {
 	this.logger.Info(args...)
 }
 
+func (this *LoggerClass) Printf(format string, args ...interface{}) {
+	this.InfoF(format, args)
+}
 func (this *LoggerClass) InfoF(format string, args ...interface{}) {
 	if this.logger == nil {
 		this.Init(&Log4goClass{}, `default`, `info`)
@@ -87,3 +98,18 @@ func (this *LoggerClass) ErrorF(format string, args ...interface{}) {
 	}
 	this.logger.ErrorF(format, args...)
 }
+
+func (this *LoggerClass) NewWriter() *Writer {
+	return &Writer{}
+}
+
+type Writer struct {
+
+}
+
+func (this *Writer) Write(p []byte) (n int, err error) {
+	Logger.Debug(string(p))
+	return len(p), nil
+}
+
+
