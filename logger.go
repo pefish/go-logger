@@ -16,9 +16,19 @@ type Configuration struct {
 
 var Logger = &LoggerClass{}
 
-func (this *LoggerClass) Init(logger InterfaceLogger, name string, level string) {
+func (this *LoggerClass) InitWithLogger(logger InterfaceLogger, name string, level string) {
 	this.logger = logger
 	this.logger.Init(name, level)
+}
+
+func (this *LoggerClass) Init(name string, level string) {
+	this.InitWithLogger(&Log4goClass{}, `default`, `info`)
+}
+
+func (this *LoggerClass) Close() {
+	if this.logger != nil {
+		this.logger.Close()
+	}
 }
 
 func (this *LoggerClass) InitWithConfiguration(config Configuration) {
@@ -34,14 +44,14 @@ func (this *LoggerClass) InitWithConfiguration(config Configuration) {
 
 func (this *LoggerClass) Debug(args ...interface{}) {
 	if this.logger == nil {
-		this.Init(&Log4goClass{}, `default`, `info`)
+		this.Init(`default`, `info`)
 	}
 	this.logger.Debug(args...)
 }
 
 func (this *LoggerClass) DebugF(format string, args ...interface{}) {
 	if this.logger == nil {
-		this.Init(&Log4goClass{}, `default`, `info`)
+		this.Init(`default`, `info`)
 	}
 	this.logger.DebugF(format, args...)
 }
@@ -56,7 +66,7 @@ func (this *LoggerClass) Println(args ...interface{}) {
 
 func (this *LoggerClass) Info(args ...interface{}) {
 	if this.logger == nil {
-		this.Init(&Log4goClass{}, `default`, `info`)
+		this.Init(`default`, `info`)
 	}
 	this.logger.Info(args...)
 }
@@ -66,35 +76,35 @@ func (this *LoggerClass) Printf(format string, args ...interface{}) {
 }
 func (this *LoggerClass) InfoF(format string, args ...interface{}) {
 	if this.logger == nil {
-		this.Init(&Log4goClass{}, `default`, `info`)
+		this.Init(`default`, `info`)
 	}
 	this.logger.InfoF(format, args...)
 }
 
 func (this *LoggerClass) Warn(args ...interface{}) {
 	if this.logger == nil {
-		this.Init(&Log4goClass{}, `default`, `info`)
+		this.Init(`default`, `info`)
 	}
 	this.logger.Warn(args...)
 }
 
 func (this *LoggerClass) WarnF(format string, args ...interface{}) {
 	if this.logger == nil {
-		this.Init(&Log4goClass{}, `default`, `info`)
+		this.Init(`default`, `info`)
 	}
 	this.logger.WarnF(format, args...)
 }
 
 func (this *LoggerClass) Error(args ...interface{}) {
 	if this.logger == nil {
-		this.Init(&Log4goClass{}, `default`, `info`)
+		this.Init(`default`, `info`)
 	}
 	this.logger.Error(args...)
 }
 
 func (this *LoggerClass) ErrorF(format string, args ...interface{}) {
 	if this.logger == nil {
-		this.Init(&Log4goClass{}, `default`, `info`)
+		this.Init(`default`, `info`)
 	}
 	this.logger.ErrorF(format, args...)
 }
