@@ -3,7 +3,7 @@ package go_logger
 import (
 	"errors"
 	"fmt"
-	"github.com/pefish/log4go"
+	"github.com/pefish/go-logger/log4go"
 	"os"
 )
 
@@ -31,7 +31,7 @@ func (this *Log4goClass) Init(name string, level string) {
 		if logWriter == nil {
 			panic(errors.New(`GO_LOG config error`))
 		}
-		sl.AddFilter("file", myLevel, logWriter)
+		sl.AddFilter("file", myLevel, logWriter, name)
 	}
 	this.logger = &sl
 }
