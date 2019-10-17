@@ -4,6 +4,11 @@ import (
 	"errors"
 )
 
+var (
+	DEFAULT_NAME  = `default`
+	DEFAULT_LEVEL = `debug`
+)
+
 type LoggerClass struct {
 	logger InterfaceLogger
 }
@@ -22,7 +27,7 @@ func (this *LoggerClass) InitWithLogger(logger InterfaceLogger, name string, lev
 }
 
 func (this *LoggerClass) Init(name string, level string) {
-	this.InitWithLogger(&Log4goClass{}, `default`, `info`)
+	this.InitWithLogger(&Log4goClass{}, DEFAULT_NAME, DEFAULT_LEVEL)
 }
 
 func (this *LoggerClass) Close() {
@@ -37,21 +42,21 @@ func (this *LoggerClass) InitWithConfiguration(config Configuration) {
 	}
 	this.logger = config.Logger
 	if config.Level == `` {
-		config.Level = `info`
+		config.Level = DEFAULT_LEVEL
 	}
 	this.logger.Init(config.Name, config.Level)
 }
 
 func (this *LoggerClass) Debug(args ...interface{}) {
 	if this.logger == nil {
-		this.Init(`default`, `info`)
+		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
 	}
 	this.logger.Debug(args...)
 }
 
 func (this *LoggerClass) DebugF(format string, args ...interface{}) {
 	if this.logger == nil {
-		this.Init(`default`, `info`)
+		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
 	}
 	this.logger.DebugF(format, args...)
 }
@@ -66,7 +71,7 @@ func (this *LoggerClass) Println(args ...interface{}) {
 
 func (this *LoggerClass) Info(args ...interface{}) {
 	if this.logger == nil {
-		this.Init(`default`, `info`)
+		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
 	}
 	this.logger.Info(args...)
 }
@@ -76,35 +81,35 @@ func (this *LoggerClass) Printf(format string, args ...interface{}) {
 }
 func (this *LoggerClass) InfoF(format string, args ...interface{}) {
 	if this.logger == nil {
-		this.Init(`default`, `info`)
+		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
 	}
 	this.logger.InfoF(format, args...)
 }
 
 func (this *LoggerClass) Warn(args ...interface{}) {
 	if this.logger == nil {
-		this.Init(`default`, `info`)
+		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
 	}
 	this.logger.Warn(args...)
 }
 
 func (this *LoggerClass) WarnF(format string, args ...interface{}) {
 	if this.logger == nil {
-		this.Init(`default`, `info`)
+		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
 	}
 	this.logger.WarnF(format, args...)
 }
 
 func (this *LoggerClass) Error(args ...interface{}) {
 	if this.logger == nil {
-		this.Init(`default`, `info`)
+		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
 	}
 	this.logger.Error(args...)
 }
 
 func (this *LoggerClass) ErrorF(format string, args ...interface{}) {
 	if this.logger == nil {
-		this.Init(`default`, `info`)
+		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
 	}
 	this.logger.ErrorF(format, args...)
 }
@@ -114,12 +119,9 @@ func (this *LoggerClass) NewWriter() *Writer {
 }
 
 type Writer struct {
-
 }
 
 func (this *Writer) Write(p []byte) (n int, err error) {
 	Logger.Debug(string(p))
 	return len(p), nil
 }
-
-
