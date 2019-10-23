@@ -2,6 +2,7 @@ package go_logger
 
 type InterfaceLogger interface {
 	Init(name string, level string)
+	InitWithConfiguration(config Configuration)
 	Close()
 
 	Debug(args ...interface{})

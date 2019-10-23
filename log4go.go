@@ -36,6 +36,10 @@ func (this *Log4goClass) Init(name string, level string) {
 	this.logger = &sl
 }
 
+func (this *Log4goClass) InitWithConfiguration(config Configuration) {
+	this.Init(config.Name, config.Level)
+}
+
 func (this *Log4goClass) Close() {
 	if this.logger != nil {
 		this.logger.Close()

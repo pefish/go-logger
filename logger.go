@@ -1,7 +1,7 @@
 package go_logger
 
 import (
-	"errors"
+	"github.com/pefish/go-application"
 )
 
 var (
@@ -14,20 +14,25 @@ type LoggerClass struct {
 }
 
 type Configuration struct {
-	Logger InterfaceLogger
 	Name   string
 	Level  string
 }
 
 var Logger = &LoggerClass{}
 
-func (this *LoggerClass) InitWithLogger(logger InterfaceLogger, name string, level string) {
-	this.logger = logger
-	this.logger.Init(name, level)
-}
-
 func (this *LoggerClass) Init(name string, level string) {
-	this.InitWithLogger(&Log4goClass{}, DEFAULT_NAME, DEFAULT_LEVEL)
+	if name == `` {
+		name = DEFAULT_NAME
+	}
+	if level == `` {
+		level = DEFAULT_LEVEL
+	}
+	if go_application.Application.Debug {
+		this.logger = &Log4goClass{}
+	} else {
+		this.logger = &LogrusClass{}
+	}
+	this.logger.Init(name, level)
 }
 
 func (this *LoggerClass) Close() {
@@ -37,13 +42,6 @@ func (this *LoggerClass) Close() {
 }
 
 func (this *LoggerClass) InitWithConfiguration(config Configuration) {
-	if config.Logger == nil {
-		panic(errors.New(`logger must be initiated`))
-	}
-	this.logger = config.Logger
-	if config.Level == `` {
-		config.Level = DEFAULT_LEVEL
-	}
 	this.logger.Init(config.Name, config.Level)
 }
 

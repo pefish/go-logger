@@ -44,6 +44,10 @@ func (this *LogrusClass) Init(name string, level string) {
 	})
 }
 
+func (this *LogrusClass) InitWithConfiguration(config Configuration) {
+	this.Init(config.Name, config.Level)
+}
+
 func (this *LogrusClass) Close() {
 
 }
