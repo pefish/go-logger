@@ -6,7 +6,6 @@ import (
 
 var (
 	DEFAULT_NAME  = `default`
-	DEFAULT_LEVEL = `debug`
 )
 
 type LoggerClass struct {
@@ -25,12 +24,13 @@ func (this *LoggerClass) Init(name string, level string) {
 		name = DEFAULT_NAME
 	}
 	if level == `` {
-		level = DEFAULT_LEVEL
+		level = `debug`
 	}
 	if go_application.Application.Debug {
 		this.logger = &Log4goClass{}
 	} else {
 		this.logger = &LogrusClass{}
+		level = `info`
 	}
 	this.logger.Init(name, level)
 }
@@ -46,16 +46,10 @@ func (this *LoggerClass) InitWithConfiguration(config Configuration) {
 }
 
 func (this *LoggerClass) Debug(args ...interface{}) {
-	if this.logger == nil {
-		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
-	}
 	this.logger.Debug(args...)
 }
 
 func (this *LoggerClass) DebugF(format string, args ...interface{}) {
-	if this.logger == nil {
-		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
-	}
 	this.logger.DebugF(format, args...)
 }
 
@@ -68,9 +62,6 @@ func (this *LoggerClass) Println(args ...interface{}) {
 }
 
 func (this *LoggerClass) Info(args ...interface{}) {
-	if this.logger == nil {
-		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
-	}
 	this.logger.Info(args...)
 }
 
@@ -78,37 +69,22 @@ func (this *LoggerClass) Printf(format string, args ...interface{}) {
 	this.InfoF(format, args)
 }
 func (this *LoggerClass) InfoF(format string, args ...interface{}) {
-	if this.logger == nil {
-		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
-	}
 	this.logger.InfoF(format, args...)
 }
 
 func (this *LoggerClass) Warn(args ...interface{}) {
-	if this.logger == nil {
-		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
-	}
 	this.logger.Warn(args...)
 }
 
 func (this *LoggerClass) WarnF(format string, args ...interface{}) {
-	if this.logger == nil {
-		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
-	}
 	this.logger.WarnF(format, args...)
 }
 
 func (this *LoggerClass) Error(args ...interface{}) {
-	if this.logger == nil {
-		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
-	}
 	this.logger.Error(args...)
 }
 
 func (this *LoggerClass) ErrorF(format string, args ...interface{}) {
-	if this.logger == nil {
-		this.Init(DEFAULT_NAME, DEFAULT_LEVEL)
-	}
 	this.logger.ErrorF(format, args...)
 }
 
