@@ -57,7 +57,7 @@ func (this *LogrusClass) Debug(args ...interface{}) {
 }
 
 func (this *LogrusClass) DebugF(format string, args ...interface{}) {
-	this.logger.Debugln(this.FormatOutput(args...))
+	this.logger.Debugln(fmt.Sprintf(format, args...))
 }
 
 func (this *LogrusClass) Info(args ...interface{}) {
@@ -65,7 +65,7 @@ func (this *LogrusClass) Info(args ...interface{}) {
 }
 
 func (this *LogrusClass) InfoF(format string, args ...interface{}) {
-	this.logger.Infoln(this.FormatOutput(args...))
+	this.logger.Infoln(fmt.Sprintf(format, args...))
 }
 
 func (this *LogrusClass) Warn(args ...interface{}) {
@@ -73,7 +73,7 @@ func (this *LogrusClass) Warn(args ...interface{}) {
 }
 
 func (this *LogrusClass) WarnF(format string, args ...interface{}) {
-	this.logger.Warnln(this.FormatOutput(args...))
+	this.logger.Warnln(fmt.Sprintf(format, args...))
 }
 
 func (this *LogrusClass) Error(args ...interface{}) {
@@ -81,7 +81,7 @@ func (this *LogrusClass) Error(args ...interface{}) {
 }
 
 func (this *LogrusClass) ErrorF(format string, args ...interface{}) {
-	this.logger.Errorln(this.FormatOutput(args...))
+	this.logger.Errorln(fmt.Sprintf(format, args...))
 }
 
 // -------------------------------- FluentdFormatter --------------------------------
