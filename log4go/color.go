@@ -97,7 +97,7 @@ func ColorizedLevelMsg(level Level, msg string) string {
 		Color.Green(msg), // FINE
 		Color.LightGreen(msg), // DEBG
 		Color.Purple(msg), // TRAC
-		msg, // INFO
+		Color.Green(msg), // INFO
 		Color.Yellow(msg), // WARN
 		Color.Red(msg), // EROR
 		Color.Yellow(msg), // CRIT
