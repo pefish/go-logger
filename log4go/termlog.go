@@ -14,7 +14,7 @@ type ConsoleLogWriter struct {
 // This creates a new ConsoleLogWriter
 func NewConsoleLogWriter() *ConsoleLogWriter {
 	consoleWriter := &ConsoleLogWriter{
-		format: "[%T %D] [%C] [%L] (%S) %M",
+		format: "[%T %D] [%C] [%L] %M",
 	}
 	return consoleWriter
 }

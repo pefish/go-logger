@@ -342,7 +342,7 @@ func (log Logger) FinestFull(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = FINEST
 	)
-	msg := Color.Green(log.getMsg(arg0, args...))
+	msg := ColorizedLevelMsg(FINEST, log.getMsg(arg0, args...))
 	log.intLogf(lvl, msg)
 }
 
@@ -369,7 +369,7 @@ func (log Logger) FineFull(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = FINE
 	)
-	msg := Color.Green(log.getMsg(arg0, args...))
+	msg := ColorizedLevelMsg(FINE, log.getMsg(arg0, args...))
 	log.intLogf(lvl, msg)
 }
 
@@ -406,7 +406,7 @@ func (log Logger) DebugFull(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = DEBUG
 	)
-	msg := Color.Blue(log.getMsg(arg0, args...))
+	msg := ColorizedLevelMsg(DEBUG, log.getMsg(arg0, args...))
 	log.intLogf(lvl, msg)
 }
 
@@ -433,7 +433,7 @@ func (log Logger) TraceFull(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = TRACE
 	)
-	msg := Color.Purple(log.getMsg(arg0, args...))
+	msg := ColorizedLevelMsg(TRACE, log.getMsg(arg0, args...))
 	log.intLogf(lvl, msg)
 }
 
@@ -461,7 +461,7 @@ func (log Logger) InfoFull(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = INFO
 	)
-	msg := Color.LightGreen(log.getMsg(arg0, args...))
+	msg := ColorizedLevelMsg(INFO, log.getMsg(arg0, args...))
 	log.intLogf(lvl, msg)
 }
 
@@ -485,7 +485,7 @@ func (log Logger) WarnFull(arg0 interface{}, args ...interface{}) error {
 	const (
 		lvl = WARNING
 	)
-	msg := Color.Purple(log.getMsg(arg0, args...))
+	msg := ColorizedLevelMsg(WARNING, log.getMsg(arg0, args...))
 	log.intLogf(lvl, msg)
 	return errors.New(msg)
 }
@@ -522,7 +522,7 @@ func (log Logger) ErrorFull(arg0 interface{}, args ...interface{}) error {
 	const (
 		lvl = ERROR
 	)
-	msg := Color.Red(log.getMsg(arg0, args...))
+	msg := ColorizedLevelMsg(ERROR, log.getMsg(arg0, args...))
 	log.intLogf(lvl, msg)
 	return errors.New(msg)
 }
@@ -543,7 +543,7 @@ func (log Logger) CriticalFull(arg0 interface{}, args ...interface{}) error {
 	const (
 		lvl = CRITICAL
 	)
-	msg := Color.Yellow(log.getMsg(arg0, args...))
+	msg := ColorizedLevelMsg(CRITICAL, log.getMsg(arg0, args...))
 	log.intLogf(lvl, msg)
 	return errors.New(msg)
 }

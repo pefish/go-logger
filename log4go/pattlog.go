@@ -79,7 +79,7 @@ func FormatLogRecord(format string, rec *LogRecord) string {
 			case 'd':
 				out.WriteString(cache.shortDate)
 			case 'L':
-				out.WriteString(colorizedLevel(rec.Level))
+				out.WriteString(ColorizedLevelMsg(rec.Level, getLevelMsg(rec.Level)))
 			case 'S':
 				out.WriteString(rec.Source)
 			case 's':
@@ -105,16 +105,16 @@ func FormatLogRecord(format string, rec *LogRecord) string {
 	return out.String()
 }
 
-func colorizedLevel(level Level) string {
+func getLevelMsg(level Level) string {
 	return [...]string{
-		Color.Green("FNST"),
-		Color.Green("FINE"),
-		Color.Blue("DEBG"),
-		Color.Purple("TRAC"),
-		Color.LightGreen("INFO"),
-		Color.Yellow("WARN"),
-		Color.Red("EROR"),
-		Color.Yellow("CRIT"),
+		"FNST",
+		"FINE",
+		"DEBG",
+		"TRAC",
+		"INFO",
+		"WARN",
+		"EROR",
+		"CRIT",
 	}[level]
 }
 
