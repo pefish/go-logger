@@ -2,47 +2,64 @@ package go_logger
 
 import (
 	"github.com/pefish/go-application"
-)
-
-var (
-	DEFAULT_NAME  = `default`
+	"github.com/pefish/go-interface-logger"
 )
 
 type LoggerClass struct {
-	logger InterfaceLogger
+	logger go_interface_logger.InterfaceLogger
 }
 
-type Configuration struct {
-	Name   string
-	Level  string
+
+var Logger = NewLogger()
+
+type LoggerOptionFunc func(options *LoggerOption)
+
+type LoggerOption struct {
+	name string
+	level string
 }
 
-var Logger = &LoggerClass{}
+func WithName(name string) LoggerOptionFunc {
+	return func(option *LoggerOption) {
+		option.name = name
+	}
+}
 
-func (this *LoggerClass) Init(name string, level string) {
-	if name == `` {
-		name = DEFAULT_NAME
+func WithLevel(level string) LoggerOptionFunc {
+	return func(option *LoggerOption) {
+		option.level = level
 	}
-	if level == `` {
-		level = `debug`
+}
+
+func NewLogger(opts ...LoggerOptionFunc) go_interface_logger.InterfaceLogger {
+	option := LoggerOption{
+		name: `default`,
+		level: `debug`,
 	}
+	for _, o := range opts {
+		o(&option)
+	}
+
+	var logger go_interface_logger.InterfaceLogger
 	if go_application.Application.Debug {
-		this.logger = &Log4goClass{}
+		log4go := &Log4goClass{}
+		log4go.Init(option.name, option.level)
+		logger = log4go
 	} else {
-		this.logger = &LogrusClass{}
-		level = `info`
+		//logrus := &LogrusClass{}
+		//logrus.Init(option.name, option.level)
+		//logger = logrus
+		zap := &ZapClass{}
+		zap.MustInit(option.name, option.level)
+		logger = zap
 	}
-	this.logger.Init(name, level)
+	return logger
 }
 
 func (this *LoggerClass) Close() {
 	if this.logger != nil {
 		this.logger.Close()
 	}
-}
-
-func (this *LoggerClass) InitWithConfiguration(config Configuration) {
-	this.logger.Init(config.Name, config.Level)
 }
 
 func (this *LoggerClass) Debug(args ...interface{}) {

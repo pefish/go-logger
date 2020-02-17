@@ -20,17 +20,7 @@ type LogrusClass struct {
 func (this *LogrusClass) Init(name string, level string) {
 	logrus.SetFormatter(&FluentdFormatter{})
 	logrus.SetOutput(os.Stdout)
-	myLevel := logrus.InfoLevel
-	if level == `debug` {
-		myLevel = logrus.DebugLevel
-	} else if level == `info` {
-		myLevel = logrus.InfoLevel
-	} else if level == `warn` {
-		myLevel = logrus.WarnLevel
-	} else if level == `error` {
-		myLevel = logrus.ErrorLevel
-	}
-	logrus.SetLevel(myLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 
 	logrus.AddHook(Hook{
 		mu:       &sync.Mutex{},
@@ -42,10 +32,6 @@ func (this *LogrusClass) Init(name string, level string) {
 	this.logger = logrus.WithFields(logrus.Fields{
 		"project": name,
 	})
-}
-
-func (this *LogrusClass) InitWithConfiguration(config Configuration) {
-	this.Init(config.Name, config.Level)
 }
 
 func (this *LogrusClass) Close() {
