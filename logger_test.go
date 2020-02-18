@@ -3,7 +3,6 @@ package go_logger
 import (
 	"errors"
 	"fmt"
-	"github.com/pefish/go-application"
 )
 
 func ExampleNewLogger() {
@@ -13,7 +12,6 @@ func ExampleNewLogger() {
 		}
 	}()
 
-	go_application.Application.Debug = false
 	Logger = NewLogger(WithName(`haha`))
 	Logger.Debug(1.344, `62562`)
 	Logger.InfoF(`hs%sfdga%s`, `6245w`, `111`)
