@@ -1,7 +1,6 @@
 package go_logger
 
 import (
-	"github.com/pefish/go-application"
 	"github.com/pefish/go-interface-logger"
 )
 
@@ -16,7 +15,7 @@ type LoggerOptionFunc func(options *LoggerOption)
 
 type LoggerOption struct {
 	name string
-	level string
+	isDebug bool
 }
 
 func WithName(name string) LoggerOptionFunc {
@@ -25,32 +24,32 @@ func WithName(name string) LoggerOptionFunc {
 	}
 }
 
-func WithLevel(level string) LoggerOptionFunc {
+func WithIsDebug(isDebug bool) LoggerOptionFunc {
 	return func(option *LoggerOption) {
-		option.level = level
+		option.isDebug = isDebug
 	}
 }
 
 func NewLogger(opts ...LoggerOptionFunc) go_interface_logger.InterfaceLogger {
 	option := LoggerOption{
 		name: `default`,
-		level: `debug`,
+		isDebug: false,
 	}
 	for _, o := range opts {
 		o(&option)
 	}
 
 	var logger go_interface_logger.InterfaceLogger
-	if go_application.Application.Debug {
+	if option.isDebug {
 		log4go := &Log4goClass{}
-		log4go.Init(option.name, option.level)
+		log4go.Init(option.name, `debug`)
 		logger = log4go
 	} else {
 		//logrus := &LogrusClass{}
 		//logrus.Init(option.name, option.level)
 		//logger = logrus
 		zap := &ZapClass{}
-		zap.MustInit(option.name, option.level)
+		zap.MustInit(option.name, `info`)
 		logger = zap
 	}
 	return logger
