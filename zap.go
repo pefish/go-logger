@@ -31,25 +31,31 @@ func (this *ZapClass) DebugF(format string, args ...interface{}) {
 }
 
 func (this *ZapClass) Info(args ...interface{}) {
-	this.logger.Info(this.FormatOutput(args...))
+	msg := this.FormatOutput(args...)
+	this.logger.Info(msg, zap.String("message", msg), zap.String("severity", "info"))
 }
 
 func (this *ZapClass) InfoF(format string, args ...interface{}) {
-	this.logger.Info(fmt.Sprintf(format, args...))
+	msg := fmt.Sprintf(format, args...)
+	this.logger.Info(msg, zap.String("message", msg), zap.String("severity", "info"))
 }
 
 func (this *ZapClass) Warn(args ...interface{}) {
-	this.logger.Warn(this.FormatOutput(args...))
+	msg := this.FormatOutput(args...)
+	this.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
 }
 
 func (this *ZapClass) WarnF(format string, args ...interface{}) {
-	this.logger.Warn(fmt.Sprintf(format, args...))
+	msg := fmt.Sprintf(format, args...)
+	this.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
 }
 
 func (this *ZapClass) Error(args ...interface{}) {
-	this.logger.Error(this.FormatOutput(args...))
+	msg := this.FormatOutput(args...)
+	this.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
 }
 
 func (this *ZapClass) ErrorF(format string, args ...interface{}) {
-	this.logger.Error(fmt.Sprintf(format, args...))
+	msg := fmt.Sprintf(format, args...)
+	this.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
 }
