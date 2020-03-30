@@ -12,7 +12,7 @@ func ExampleNewLogger() {
 		}
 	}()
 
-	Logger = NewLogger(WithName(`haha`))
+	Logger = NewLogger(WithName(`haha`), WithIsDebug(false), WithLevel(`info`))
 	Logger.Debug(1.344, `62562`)
 	Logger.InfoF(`hs%sfdga%s`, `6245w`, `111`)
 	Logger.Error(errors.New(`111`))
