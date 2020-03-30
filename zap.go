@@ -3,6 +3,7 @@ package go_logger
 import (
 	"fmt"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type ZapClass struct {
@@ -10,8 +11,30 @@ type ZapClass struct {
 	logger *zap.Logger
 }
 
+var errLevels = map[string]zapcore.Level{
+	`debug`: zap.DebugLevel,
+	`info`: zap.InfoLevel,
+	`warn`: zap.WarnLevel,
+	`error`: zap.ErrorLevel,
+}
+
 func (this *ZapClass) MustInit(name string, level string) {
-	logger, err := zap.NewProduction()
+	// 生产环境必须info级别或以上
+	if level != `error` && level != `warn` && level != `info` {
+		panic(`level error`)
+	}
+	logger, err := zap.Config{
+		Level:       zap.NewAtomicLevelAt(errLevels[level]),
+		Development: false,
+		Sampling: &zap.SamplingConfig{
+			Initial:    100,
+			Thereafter: 100,
+		},
+		Encoding:         "json",
+		EncoderConfig:    zap.NewProductionEncoderConfig(),
+		OutputPaths:      []string{"stderr"},
+		ErrorOutputPaths: []string{"stderr"},
+	}.Build()
 	if err != nil {
 		panic(err)
 	}

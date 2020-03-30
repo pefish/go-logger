@@ -12,26 +12,23 @@ type Log4goClass struct {
 	logger *log4go.Logger
 }
 
+var log4goErrLevels = map[string]log4go.Level{
+	`debug`: log4go.DEBUG,
+	`info`: log4go.INFO,
+	`warn`: log4go.WARNING,
+	`error`: log4go.ERROR,
+}
+
 func (this *Log4goClass) Init(name string, level string) {
 	sl := make(log4go.Logger)
-	myLevel := log4go.INFO
-	if level == `debug` {
-		myLevel = log4go.DEBUG
-	} else if level == `info` {
-		myLevel = log4go.INFO
-	} else if level == `warn` {
-		myLevel = log4go.WARNING
-	} else if level == `error` {
-		myLevel = log4go.ERROR
-	}
-	sl.AddFilter(`console`, myLevel, log4go.NewConsoleLogWriter(), name)
+	sl.AddFilter(`console`, log4goErrLevels[level], log4go.NewConsoleLogWriter(), name)
 	logfile := os.Getenv(`GO_LOG`)
 	if logfile != `` {
 		logWriter := log4go.NewFileLogWriter(logfile+fmt.Sprintf(`/%s.log`, name), true, true)
 		if logWriter == nil {
 			panic(errors.New(`GO_LOG config error`))
 		}
-		sl.AddFilter("file", myLevel, logWriter, name)
+		sl.AddFilter("file", log4goErrLevels[level], logWriter, name)
 	}
 	this.logger = &sl
 }
