@@ -1,10 +1,8 @@
 package go_logger
 
 import (
-	"errors"
 	"fmt"
 	"github.com/pefish/go-logger/log4go"
-	"os"
 )
 
 type Log4goClass struct {
@@ -20,20 +18,12 @@ var log4goErrLevels = map[string]log4go.Level{
 	`error`: log4go.ERROR,
 }
 
-func (this *Log4goClass) Init(prefix string, name string, level string) {
+func (this *Log4goClass) Init(prefix string, level string) {
 	if prefix != `` {
 		this.prefix = fmt.Sprintf("[%s]: ", prefix)
 	}
 	sl := make(log4go.Logger)
-	sl.AddFilter(`console`, log4goErrLevels[level], log4go.NewConsoleLogWriter(), name)
-	logfile := os.Getenv(`GO_LOG`)
-	if logfile != `` {
-		logWriter := log4go.NewFileLogWriter(logfile+fmt.Sprintf(`/%s.log`, name), true, true)
-		if logWriter == nil {
-			panic(errors.New(`GO_LOG config error`))
-		}
-		sl.AddFilter("file", log4goErrLevels[level], logWriter, name)
-	}
+	sl.AddFilter(`console`, log4goErrLevels[level], log4go.NewConsoleLogWriter())
 	this.logger = &sl
 }
 

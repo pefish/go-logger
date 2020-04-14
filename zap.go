@@ -19,7 +19,7 @@ var errLevels = map[string]zapcore.Level{
 	`error`: zap.ErrorLevel,
 }
 
-func (this *ZapClass) MustInit(prefix string, name string, level string) {
+func (this *ZapClass) MustInit(prefix string, level string) {
 	if prefix != `` {
 		this.prefix = fmt.Sprintf("[%s]: ", prefix)
 	}
