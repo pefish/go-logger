@@ -17,6 +17,7 @@ type LoggerOption struct {
 	name string
 	isDebug bool
 	level string
+	prefix string
 }
 
 func WithName(name string) LoggerOptionFunc {
@@ -37,11 +38,18 @@ func WithLevel(level string) LoggerOptionFunc {
 	}
 }
 
+func WithPrefix(prefix string) LoggerOptionFunc {
+	return func(option *LoggerOption) {
+		option.prefix = prefix
+	}
+}
+
 func NewLogger(opts ...LoggerOptionFunc) go_interface_logger.InterfaceLogger {
 	option := LoggerOption{
 		name: `default`,
 		isDebug: false,
 		level: ``,
+		prefix: ``,
 	}
 	for _, o := range opts {
 		o(&option)
@@ -54,7 +62,7 @@ func NewLogger(opts ...LoggerOptionFunc) go_interface_logger.InterfaceLogger {
 		if option.level != `` {
 			level = option.level
 		}
-		log4go.Init(option.name, level)
+		log4go.Init(option.prefix, option.name, level)
 		logger = log4go
 	} else {
 		level := `info`
@@ -62,7 +70,7 @@ func NewLogger(opts ...LoggerOptionFunc) go_interface_logger.InterfaceLogger {
 			level = option.level
 		}
 		zap := &ZapClass{}
-		zap.MustInit(option.name, level)
+		zap.MustInit(option.prefix, option.name, level)
 		logger = zap
 	}
 	return logger

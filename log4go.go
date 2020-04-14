@@ -10,6 +10,7 @@ import (
 type Log4goClass struct {
 	BaseLogger
 	logger *log4go.Logger
+	prefix string
 }
 
 var log4goErrLevels = map[string]log4go.Level{
@@ -19,7 +20,10 @@ var log4goErrLevels = map[string]log4go.Level{
 	`error`: log4go.ERROR,
 }
 
-func (this *Log4goClass) Init(name string, level string) {
+func (this *Log4goClass) Init(prefix string, name string, level string) {
+	if prefix != `` {
+		this.prefix = fmt.Sprintf("[%s]: ", prefix)
+	}
 	sl := make(log4go.Logger)
 	sl.AddFilter(`console`, log4goErrLevels[level], log4go.NewConsoleLogWriter(), name)
 	logfile := os.Getenv(`GO_LOG`)
@@ -40,33 +44,33 @@ func (this *Log4goClass) Close() {
 }
 
 func (this *Log4goClass) Debug(args ...interface{}) {
-	this.logger.DebugFull(`%s`, this.FormatOutput(args...))
+	this.logger.DebugFull("%s%s", this.prefix, this.FormatOutput(args...))
 }
 
 func (this *Log4goClass) DebugF(format string, args ...interface{}) {
-	this.logger.DebugFull(format, args...)
+	this.logger.DebugFull("%s%s", this.prefix, fmt.Sprintf(format, args...))
 }
 
 func (this *Log4goClass) Info(args ...interface{}) {
-	this.logger.InfoFull(`%s`, this.FormatOutput(args...))
+	this.logger.InfoFull("%s%s", this.prefix, this.FormatOutput(args...))
 }
 
 func (this *Log4goClass) InfoF(format string, args ...interface{}) {
-	this.logger.InfoFull(format, args...)
+	this.logger.InfoFull("%s%s", this.prefix, fmt.Sprintf(format, args...))
 }
 
 func (this *Log4goClass) Warn(args ...interface{}) {
-	this.logger.WarnFull(`%s`, this.FormatOutput(args...))
+	this.logger.WarnFull("%s%s", this.prefix, this.FormatOutput(args...))
 }
 
 func (this *Log4goClass) WarnF(format string, args ...interface{}) {
-	this.logger.WarnFull(format, args...)
+	this.logger.WarnFull("%s%s", this.prefix, fmt.Sprintf(format, args...))
 }
 
 func (this *Log4goClass) Error(args ...interface{}) {
-	this.logger.ErrorFull(`%s`, this.FormatOutput(args...))
+	this.logger.ErrorFull("%s%s", this.prefix, this.FormatOutput(args...))
 }
 
 func (this *Log4goClass) ErrorF(format string, args ...interface{}) {
-	this.logger.ErrorFull(format, args...)
+	this.logger.ErrorFull("%s%s", this.prefix, fmt.Sprintf(format, args...))
 }
