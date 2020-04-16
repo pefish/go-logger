@@ -3,6 +3,7 @@ package go_logger
 import (
 	"fmt"
 	"github.com/pefish/go-logger/log4go"
+	"runtime/debug"
 )
 
 type Log4goClass struct {
@@ -58,9 +59,9 @@ func (this *Log4goClass) WarnF(format string, args ...interface{}) {
 }
 
 func (this *Log4goClass) Error(args ...interface{}) {
-	this.logger.ErrorFull("%s%s", this.prefix, this.FormatOutput(args...))
+	this.logger.ErrorFull("%s%s\n%s", this.prefix, this.FormatOutput(args...), string(debug.Stack()))
 }
 
 func (this *Log4goClass) ErrorF(format string, args ...interface{}) {
-	this.logger.ErrorFull("%s%s", this.prefix, fmt.Sprintf(format, args...))
+	this.logger.ErrorFull("%s%s\n%s", this.prefix, fmt.Sprintf(format, args...), string(debug.Stack()))
 }
