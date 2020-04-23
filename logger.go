@@ -68,63 +68,71 @@ func NewLogger(opts ...LoggerOptionFunc) go_interface_logger.InterfaceLogger {
 	return logger
 }
 
-func (this *LoggerClass) Close() {
-	if this.logger != nil {
-		this.logger.Close()
+func (l *LoggerClass) Close() {
+	if l.logger != nil {
+		l.logger.Close()
 	}
 }
 
-func (this *LoggerClass) Debug(args ...interface{}) {
-	this.logger.Debug(args...)
+func (l *LoggerClass) Debug(args ...interface{}) {
+	l.logger.Debug(args...)
 }
 
-func (this *LoggerClass) DebugF(format string, args ...interface{}) {
-	this.logger.DebugF(format, args...)
+func (l *LoggerClass) DebugF(format string, args ...interface{}) {
+	l.logger.DebugF(format, args...)
 }
 
-func (this *LoggerClass) Print(args ...interface{}) {
-	this.Info(args)
+func (l *LoggerClass) Print(args ...interface{}) {
+	l.Info(args)
 }
 
-func (this *LoggerClass) Println(args ...interface{}) {
-	this.Info(args)
+func (l *LoggerClass) Println(args ...interface{}) {
+	l.Info(args)
 }
 
-func (this *LoggerClass) Info(args ...interface{}) {
-	this.logger.Info(args...)
+func (l *LoggerClass) Info(args ...interface{}) {
+	l.logger.Info(args...)
 }
 
-func (this *LoggerClass) Printf(format string, args ...interface{}) {
-	this.InfoF(format, args)
+func (l *LoggerClass) Printf(format string, args ...interface{}) {
+	l.InfoF(format, args)
 }
-func (this *LoggerClass) InfoF(format string, args ...interface{}) {
-	this.logger.InfoF(format, args...)
-}
-
-func (this *LoggerClass) Warn(args ...interface{}) {
-	this.logger.Warn(args...)
+func (l *LoggerClass) InfoF(format string, args ...interface{}) {
+	l.logger.InfoF(format, args...)
 }
 
-func (this *LoggerClass) WarnF(format string, args ...interface{}) {
-	this.logger.WarnF(format, args...)
+func (l *LoggerClass) Warn(args ...interface{}) {
+	l.logger.Warn(args...)
 }
 
-func (this *LoggerClass) Error(args ...interface{}) {
-	this.logger.Error(args...)
+func (l *LoggerClass) WarnF(format string, args ...interface{}) {
+	l.logger.WarnF(format, args...)
 }
 
-func (this *LoggerClass) ErrorF(format string, args ...interface{}) {
-	this.logger.ErrorF(format, args...)
+func (l *LoggerClass) Error(args ...interface{}) {
+	l.logger.Error(args...)
 }
 
-func (this *LoggerClass) NewWriter() *Writer {
+func (l *LoggerClass) ErrorF(format string, args ...interface{}) {
+	l.logger.ErrorF(format, args...)
+}
+
+func (l *LoggerClass) ErrorWithStack(args ...interface{}) {
+	l.logger.ErrorWithStack(args...)
+}
+
+func (l *LoggerClass) ErrorWithStackF(format string, args ...interface{}) {
+	l.logger.ErrorWithStackF(format, args...)
+}
+
+func (l *LoggerClass) NewWriter() *Writer {
 	return &Writer{}
 }
 
 type Writer struct {
 }
 
-func (this *Writer) Write(p []byte) (n int, err error) {
+func (l *Writer) Write(p []byte) (n int, err error) {
 	Logger.Debug(string(p))
 	return len(p), nil
 }

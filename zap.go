@@ -19,9 +19,9 @@ var errLevels = map[string]zapcore.Level{
 	`error`: zap.ErrorLevel,
 }
 
-func (this *ZapClass) MustInit(prefix string, level string) {
+func (zapInstance *ZapClass) MustInit(prefix string, level string) {
 	if prefix != `` {
-		this.prefix = fmt.Sprintf("[%s]: ", prefix)
+		zapInstance.prefix = fmt.Sprintf("[%s]: ", prefix)
 	}
 	// 生产环境必须info级别或以上
 	if level != `error` && level != `warn` && level != `info` {
@@ -42,47 +42,55 @@ func (this *ZapClass) MustInit(prefix string, level string) {
 	if err != nil {
 		panic(err)
 	}
-	this.logger = logger
+	zapInstance.logger = logger
 }
 
-func (this *ZapClass) Close() {
-	this.logger.Sync()
+func (zapInstance *ZapClass) Close() {
+	zapInstance.logger.Sync()
 }
 
-func (this *ZapClass) Debug(args ...interface{}) {
-	this.logger.Debug(fmt.Sprintf("%s%s", this.prefix, this.FormatOutput(args...)))
+func (zapInstance *ZapClass) Debug(args ...interface{}) {
+	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...)))
 }
 
-func (this *ZapClass) DebugF(format string, args ...interface{}) {
-	this.logger.Debug(fmt.Sprintf("%s%s", this.prefix, fmt.Sprintf(format, args...)))
+func (zapInstance *ZapClass) DebugF(format string, args ...interface{}) {
+	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...)))
 }
 
-func (this *ZapClass) Info(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", this.prefix, this.FormatOutput(args...))
-	this.logger.Info(msg, zap.String("message", msg), zap.String("severity", "info"))
+func (zapInstance *ZapClass) Info(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
+	zapInstance.logger.Info(msg, zap.String("message", msg), zap.String("severity", "info"))
 }
 
-func (this *ZapClass) InfoF(format string, args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", this.prefix, fmt.Sprintf(format, args...))
-	this.logger.Info(msg, zap.String("message", msg), zap.String("severity", "info"))
+func (zapInstance *ZapClass) InfoF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
+	zapInstance.logger.Info(msg, zap.String("message", msg), zap.String("severity", "info"))
 }
 
-func (this *ZapClass) Warn(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", this.prefix, this.FormatOutput(args...))
-	this.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
+func (zapInstance *ZapClass) Warn(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
+	zapInstance.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
 }
 
-func (this *ZapClass) WarnF(format string, args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", this.prefix, fmt.Sprintf(format, args...))
-	this.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
+func (zapInstance *ZapClass) WarnF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
+	zapInstance.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
 }
 
-func (this *ZapClass) Error(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", this.prefix, this.FormatOutput(args...))
-	this.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
+func (zapInstance *ZapClass) Error(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
+	zapInstance.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
 }
 
-func (this *ZapClass) ErrorF(format string, args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", this.prefix, fmt.Sprintf(format, args...))
-	this.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
+func (zapInstance *ZapClass) ErrorF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
+	zapInstance.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
+}
+
+func (zapInstance *ZapClass) ErrorWithStack(args ...interface{}) {
+	zapInstance.Error(args...)
+}
+
+func (zapInstance *ZapClass) ErrorWithStackF(format string, args ...interface{}) {
+	zapInstance.ErrorF(format, args...)
 }

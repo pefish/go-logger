@@ -19,49 +19,57 @@ var log4goErrLevels = map[string]log4go.Level{
 	`error`: log4go.ERROR,
 }
 
-func (this *Log4goClass) Init(prefix string, level string) {
+func (log4goInstance *Log4goClass) Init(prefix string, level string) {
 	if prefix != `` {
-		this.prefix = fmt.Sprintf("[%s]: ", prefix)
+		log4goInstance.prefix = fmt.Sprintf("[%s]: ", prefix)
 	}
 	sl := make(log4go.Logger)
 	sl.AddFilter(`console`, log4goErrLevels[level], log4go.NewConsoleLogWriter())
-	this.logger = &sl
+	log4goInstance.logger = &sl
 }
 
-func (this *Log4goClass) Close() {
-	if this.logger != nil {
-		this.logger.Close()
+func (log4goInstance *Log4goClass) Close() {
+	if log4goInstance.logger != nil {
+		log4goInstance.logger.Close()
 	}
 }
 
-func (this *Log4goClass) Debug(args ...interface{}) {
-	this.logger.DebugFull("%s%s", this.prefix, this.FormatOutput(args...))
+func (log4goInstance *Log4goClass) Debug(args ...interface{}) {
+	log4goInstance.logger.DebugFull("%s%s", log4goInstance.prefix, log4goInstance.FormatOutput(args...))
 }
 
-func (this *Log4goClass) DebugF(format string, args ...interface{}) {
-	this.logger.DebugFull("%s%s", this.prefix, fmt.Sprintf(format, args...))
+func (log4goInstance *Log4goClass) DebugF(format string, args ...interface{}) {
+	log4goInstance.logger.DebugFull("%s%s", log4goInstance.prefix, fmt.Sprintf(format, args...))
 }
 
-func (this *Log4goClass) Info(args ...interface{}) {
-	this.logger.InfoFull("%s%s", this.prefix, this.FormatOutput(args...))
+func (log4goInstance *Log4goClass) Info(args ...interface{}) {
+	log4goInstance.logger.InfoFull("%s%s", log4goInstance.prefix, log4goInstance.FormatOutput(args...))
 }
 
-func (this *Log4goClass) InfoF(format string, args ...interface{}) {
-	this.logger.InfoFull("%s%s", this.prefix, fmt.Sprintf(format, args...))
+func (log4goInstance *Log4goClass) InfoF(format string, args ...interface{}) {
+	log4goInstance.logger.InfoFull("%s%s", log4goInstance.prefix, fmt.Sprintf(format, args...))
 }
 
-func (this *Log4goClass) Warn(args ...interface{}) {
-	this.logger.WarnFull("%s%s", this.prefix, this.FormatOutput(args...))
+func (log4goInstance *Log4goClass) Warn(args ...interface{}) {
+	log4goInstance.logger.WarnFull("%s%s", log4goInstance.prefix, log4goInstance.FormatOutput(args...))
 }
 
-func (this *Log4goClass) WarnF(format string, args ...interface{}) {
-	this.logger.WarnFull("%s%s", this.prefix, fmt.Sprintf(format, args...))
+func (log4goInstance *Log4goClass) WarnF(format string, args ...interface{}) {
+	log4goInstance.logger.WarnFull("%s%s", log4goInstance.prefix, fmt.Sprintf(format, args...))
 }
 
-func (this *Log4goClass) Error(args ...interface{}) {
-	this.logger.ErrorFull("%s%s\n%s", this.prefix, this.FormatOutput(args...), string(debug.Stack()))
+func (log4goInstance *Log4goClass) Error(args ...interface{}) {
+	log4goInstance.logger.ErrorFull("%s%s", log4goInstance.prefix, log4goInstance.FormatOutput(args...))
 }
 
-func (this *Log4goClass) ErrorF(format string, args ...interface{}) {
-	this.logger.ErrorFull("%s%s\n%s", this.prefix, fmt.Sprintf(format, args...), string(debug.Stack()))
+func (log4goInstance *Log4goClass) ErrorF(format string, args ...interface{}) {
+	log4goInstance.logger.ErrorFull("%s%s", log4goInstance.prefix, fmt.Sprintf(format, args...))
+}
+
+func (log4goInstance *Log4goClass) ErrorWithStack(args ...interface{}) {
+	log4goInstance.logger.ErrorFull("%s%s\n%s", log4goInstance.prefix, log4goInstance.FormatOutput(args...), string(debug.Stack()))
+}
+
+func (log4goInstance *Log4goClass) ErrorWithStackF(format string, args ...interface{}) {
+	log4goInstance.logger.ErrorFull("%s%s\n%s", log4goInstance.prefix, fmt.Sprintf(format, args...), string(debug.Stack()))
 }

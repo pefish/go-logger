@@ -17,7 +17,7 @@ type LogrusClass struct {
 	logger *logrus.Entry
 }
 
-func (this *LogrusClass) Init(name string, level string) {
+func (l *LogrusClass) Init(name string, level string) {
 	logrus.SetFormatter(&FluentdFormatter{})
 	logrus.SetOutput(os.Stdout)
 	logrus.SetLevel(logrus.InfoLevel)
@@ -29,45 +29,45 @@ func (this *LogrusClass) Init(name string, level string) {
 		function: true,
 		levels:   logrus.AllLevels,
 	})
-	this.logger = logrus.WithFields(logrus.Fields{
+	l.logger = logrus.WithFields(logrus.Fields{
 		"project": name,
 	})
 }
 
-func (this *LogrusClass) Close() {
+func (l *LogrusClass) Close() {
 
 }
 
-func (this *LogrusClass) Debug(args ...interface{}) {
-	this.logger.Debugln(this.FormatOutput(args...))
+func (l *LogrusClass) Debug(args ...interface{}) {
+	l.logger.Debugln(l.FormatOutput(args...))
 }
 
-func (this *LogrusClass) DebugF(format string, args ...interface{}) {
-	this.logger.Debugln(fmt.Sprintf(format, args...))
+func (l *LogrusClass) DebugF(format string, args ...interface{}) {
+	l.logger.Debugln(fmt.Sprintf(format, args...))
 }
 
-func (this *LogrusClass) Info(args ...interface{}) {
-	this.logger.Infoln(this.FormatOutput(args...))
+func (l *LogrusClass) Info(args ...interface{}) {
+	l.logger.Infoln(l.FormatOutput(args...))
 }
 
-func (this *LogrusClass) InfoF(format string, args ...interface{}) {
-	this.logger.Infoln(fmt.Sprintf(format, args...))
+func (l *LogrusClass) InfoF(format string, args ...interface{}) {
+	l.logger.Infoln(fmt.Sprintf(format, args...))
 }
 
-func (this *LogrusClass) Warn(args ...interface{}) {
-	this.logger.Warnln(this.FormatOutput(args...))
+func (l *LogrusClass) Warn(args ...interface{}) {
+	l.logger.Warnln(l.FormatOutput(args...))
 }
 
-func (this *LogrusClass) WarnF(format string, args ...interface{}) {
-	this.logger.Warnln(fmt.Sprintf(format, args...))
+func (l *LogrusClass) WarnF(format string, args ...interface{}) {
+	l.logger.Warnln(fmt.Sprintf(format, args...))
 }
 
-func (this *LogrusClass) Error(args ...interface{}) {
-	this.logger.Errorln(this.FormatOutput(args...))
+func (l *LogrusClass) Error(args ...interface{}) {
+	l.logger.Errorln(l.FormatOutput(args...))
 }
 
-func (this *LogrusClass) ErrorF(format string, args ...interface{}) {
-	this.logger.Errorln(fmt.Sprintf(format, args...))
+func (l *LogrusClass) ErrorF(format string, args ...interface{}) {
+	l.logger.Errorln(fmt.Sprintf(format, args...))
 }
 
 // -------------------------------- FluentdFormatter --------------------------------
