@@ -145,11 +145,3 @@ func (zapInstance *ZapClass) ErrorF(format string, args ...interface{}) {
 	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
 	zapInstance.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
 }
-
-func (zapInstance *ZapClass) ErrorWithStack(args ...interface{}) {
-	zapInstance.Error(args...)
-}
-
-func (zapInstance *ZapClass) ErrorWithStackF(format string, args ...interface{}) {
-	zapInstance.ErrorF(format, args...)
-}
