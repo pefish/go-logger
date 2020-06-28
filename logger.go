@@ -1,33 +1,36 @@
 package go_logger
 
 import (
-	"github.com/pefish/go-interface-logger"
+	"fmt"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-type LoggerClass struct {
-	logger go_interface_logger.InterfaceLogger
+type ZapClass struct {
+	logger *zap.Logger
+	prefix string
 }
 
-
-var Logger = NewLogger()
+var Logger = NewLogger("info")
 
 type LoggerOptionFunc func(options *LoggerOption)
 
 type LoggerOption struct {
-	isDebug bool
-	level string
-	prefix string
+	printEncoding string
+	level       string
+	prefix      string
+	isDev bool
 }
 
-func WithIsDebug(isDebug bool) LoggerOptionFunc {
+func WithIsDev(isDev bool) LoggerOptionFunc {
 	return func(option *LoggerOption) {
-		option.isDebug = isDebug
+		option.isDev = isDev
 	}
 }
 
-func WithLevel(level string) LoggerOptionFunc {
+func WithPrintEncoding(printEncoding string) LoggerOptionFunc {
 	return func(option *LoggerOption) {
-		option.level = level
+		option.printEncoding = printEncoding
 	}
 }
 
@@ -37,102 +40,116 @@ func WithPrefix(prefix string) LoggerOptionFunc {
 	}
 }
 
-func NewLogger(opts ...LoggerOptionFunc) go_interface_logger.InterfaceLogger {
+var errLevels = map[string]zapcore.Level{
+	`debug`: zap.DebugLevel,
+	`info`:  zap.InfoLevel,
+	`warn`:  zap.WarnLevel,
+	`error`: zap.ErrorLevel,
+}
+
+func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 	option := LoggerOption{
-		isDebug: false,
-		level: ``,
+		level:  level,
 		prefix: ``,
+		printEncoding: "json",
+		isDev: false,
 	}
+
+	if option.level != `error` && option.level != `warn` { // 默认如果level是error或者warn，那么就打印rawtext
+		option.printEncoding = "console"
+		option.isDev = true
+	}
+
 	for _, o := range opts {
 		o(&option)
 	}
-
-	var logger go_interface_logger.InterfaceLogger
-	if option.isDebug {
-		log4go := &Log4goClass{}
-		level := `debug`
-		if option.level != `` {
-			level = option.level
-		}
-		log4go.Init(option.prefix, level)
-		logger = log4go
-	} else {
-		level := `info`
-		if option.level != `` {
-			level = option.level
-		}
-		zap := &ZapClass{}
-		zap.MustInit(option.prefix, level)
-		logger = zap
+	logger, err := zap.Config{
+		Level:       zap.NewAtomicLevelAt(errLevels[option.level]),
+		Development: option.isDev,
+		Sampling: &zap.SamplingConfig{
+			Initial:    100,
+			Thereafter: 100,
+		},
+		Encoding:         option.printEncoding,
+		EncoderConfig: func() zapcore.EncoderConfig {
+			if option.isDev {
+				return zap.NewDevelopmentEncoderConfig()
+			} else {
+				return zap.NewProductionEncoderConfig()
+			}
+		}(),
+		OutputPaths:      []string{"stderr"},
+		ErrorOutputPaths: []string{"stderr"},
+	}.Build()
+	if err != nil {
+		panic(err)
 	}
-	return logger
-}
-
-func (l *LoggerClass) Close() {
-	if l.logger != nil {
-		l.logger.Close()
+	return &ZapClass{
+		logger: logger,
+		prefix: func() string {
+			if option.prefix != "" {
+				return fmt.Sprintf("[%s]: ", option.prefix)
+			} else {
+				return ""
+			}
+		}(),
 	}
 }
 
-func (l *LoggerClass) Debug(args ...interface{}) {
-	l.logger.Debug(args...)
+func (zapInstance *ZapClass) Close() {
+	zapInstance.logger.Sync()
 }
 
-func (l *LoggerClass) DebugF(format string, args ...interface{}) {
-	l.logger.DebugF(format, args...)
+func (zapInstance *ZapClass) FormatOutput(args ...interface{}) string {
+	result := ``
+	for _, arg := range args {
+		result += fmt.Sprint(arg) + ` `
+	}
+	return result
 }
 
-func (l *LoggerClass) Print(args ...interface{}) {
-	l.Info(args)
+func (zapInstance *ZapClass) Debug(args ...interface{}) {
+	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...)))
 }
 
-func (l *LoggerClass) Println(args ...interface{}) {
-	l.Info(args)
+func (zapInstance *ZapClass) DebugF(format string, args ...interface{}) {
+	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...)))
 }
 
-func (l *LoggerClass) Info(args ...interface{}) {
-	l.logger.Info(args...)
+func (zapInstance *ZapClass) Info(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
+	zapInstance.logger.Info(msg)
 }
 
-func (l *LoggerClass) Printf(format string, args ...interface{}) {
-	l.InfoF(format, args)
-}
-func (l *LoggerClass) InfoF(format string, args ...interface{}) {
-	l.logger.InfoF(format, args...)
+func (zapInstance *ZapClass) InfoF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
+	zapInstance.logger.Info(msg)
 }
 
-func (l *LoggerClass) Warn(args ...interface{}) {
-	l.logger.Warn(args...)
+func (zapInstance *ZapClass) Warn(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
+	zapInstance.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
 }
 
-func (l *LoggerClass) WarnF(format string, args ...interface{}) {
-	l.logger.WarnF(format, args...)
+func (zapInstance *ZapClass) WarnF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
+	zapInstance.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
 }
 
-func (l *LoggerClass) Error(args ...interface{}) {
-	l.logger.Error(args...)
+func (zapInstance *ZapClass) Error(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
+	zapInstance.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
 }
 
-func (l *LoggerClass) ErrorF(format string, args ...interface{}) {
-	l.logger.ErrorF(format, args...)
+func (zapInstance *ZapClass) ErrorF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
+	zapInstance.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
 }
 
-func (l *LoggerClass) ErrorWithStack(args ...interface{}) {
-	l.logger.ErrorWithStack(args...)
+func (zapInstance *ZapClass) ErrorWithStack(args ...interface{}) {
+	zapInstance.Error(args...)
 }
 
-func (l *LoggerClass) ErrorWithStackF(format string, args ...interface{}) {
-	l.logger.ErrorWithStackF(format, args...)
-}
-
-func (l *LoggerClass) NewWriter() *Writer {
-	return &Writer{}
-}
-
-type Writer struct {
-}
-
-func (l *Writer) Write(p []byte) (n int, err error) {
-	Logger.Debug(string(p))
-	return len(p), nil
+func (zapInstance *ZapClass) ErrorWithStackF(format string, args ...interface{}) {
+	zapInstance.ErrorF(format, args...)
 }
