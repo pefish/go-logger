@@ -1,7 +1,7 @@
 package go_logger
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 )
 
 func ExampleNewLogger() {
@@ -19,3 +19,4 @@ func ExampleNewLogger() {
 	// Output:
 	//
 }
+

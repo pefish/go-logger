@@ -64,6 +64,8 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 		o(&option)
 	}
 	logger, err := zap.Config{
+		DisableCaller: true,
+		DisableStacktrace: true,
 		Level:       zap.NewAtomicLevelAt(errLevels[option.level]),
 		Development: option.isDev,
 		Sampling: &zap.SamplingConfig{
@@ -100,16 +102,17 @@ func (zapInstance *ZapClass) Close() {
 	zapInstance.logger.Sync()
 }
 
-func (zapInstance *ZapClass) FormatOutput(args ...interface{}) string {
+func (zapInstance *ZapClass) FormatOutput(format string, args ...interface{}) string {
 	result := ``
 	for _, arg := range args {
-		result += fmt.Sprint(arg) + ` `
+		result += fmt.Sprintf(format, arg) + "   "
 	}
+	result = result[:len(result) - 3]
 	return result
 }
 
 func (zapInstance *ZapClass) Debug(args ...interface{}) {
-	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...)))
+	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%v", args...)))
 }
 
 func (zapInstance *ZapClass) DebugF(format string, args ...interface{}) {
@@ -117,7 +120,7 @@ func (zapInstance *ZapClass) DebugF(format string, args ...interface{}) {
 }
 
 func (zapInstance *ZapClass) Info(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%v", args...))
 	zapInstance.logger.Info(msg)
 }
 
@@ -127,21 +130,21 @@ func (zapInstance *ZapClass) InfoF(format string, args ...interface{}) {
 }
 
 func (zapInstance *ZapClass) Warn(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
-	zapInstance.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%v", args...))
+	zapInstance.logger.Warn(msg)
 }
 
 func (zapInstance *ZapClass) WarnF(format string, args ...interface{}) {
 	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
-	zapInstance.logger.Warn(msg, zap.String("message", msg), zap.String("severity", "warning"))
+	zapInstance.logger.Warn(msg)
 }
 
 func (zapInstance *ZapClass) Error(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
-	zapInstance.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%+v", args...))
+	zapInstance.logger.Error(msg)
 }
 
 func (zapInstance *ZapClass) ErrorF(format string, args ...interface{}) {
 	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
-	zapInstance.logger.Error(msg, zap.String("message", msg), zap.String("severity", "error"))
+	zapInstance.logger.Error(msg)
 }
