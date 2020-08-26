@@ -51,18 +51,24 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 	option := LoggerOption{
 		level:  level,
 		prefix: ``,
-		printEncoding: "json",
 		isDev: false,
 	}
 
-	if option.level != `error` && option.level != `warn` { // 默认如果level是error或者warn，那么就打印rawtext
-		option.printEncoding = "console"
+	if option.level != `error` && option.level != `warn` {
 		option.isDev = true
 	}
 
 	for _, o := range opts {
 		o(&option)
 	}
+
+	if !option.isDev {
+		option.printEncoding = "json"
+	} else {
+		option.printEncoding = "console"
+	}
+	//fmt.Printf("%#v\n", option)
+
 	logger, err := zap.Config{
 		DisableCaller: true,
 		DisableStacktrace: true,
