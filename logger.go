@@ -9,7 +9,8 @@ import (
 type ZapClass struct {
 	logger *zap.Logger
 	prefix string
-	isDev bool
+	isDev bool  // 日志级别不是error、warn，则为开发模式
+	isDebug bool  // 日志级别不是error、warn、info，则为开发模式
 }
 
 var Logger = NewLogger("info")
@@ -20,13 +21,6 @@ type LoggerOption struct {
 	printEncoding string
 	level       string
 	prefix      string
-	isDev bool
-}
-
-func WithIsDev(isDev bool) LoggerOptionFunc {
-	return func(option *LoggerOption) {
-		option.isDev = isDev
-	}
 }
 
 func WithPrintEncoding(printEncoding string) LoggerOptionFunc {
@@ -52,36 +46,39 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 	option := LoggerOption{
 		level:  level,
 		prefix: ``,
-		isDev: false,
 	}
+	isDev := false
+	isDebug := false
 
 	if option.level != `error` && option.level != `warn` {
-		option.isDev = true
+		isDev = true
+		if option.level != `info` {
+			isDebug = true
+		}
 	}
 
 	for _, o := range opts {
 		o(&option)
 	}
 
-	if !option.isDev {
+	if !isDev {
 		option.printEncoding = "json"
 	} else {
 		option.printEncoding = "console"
 	}
-	//fmt.Printf("%#v\n", option)
 
 	logger, err := zap.Config{
 		DisableCaller: true,
 		DisableStacktrace: true,
 		Level:       zap.NewAtomicLevelAt(errLevels[option.level]),
-		Development: option.isDev,
+		Development: isDev,
 		Sampling: &zap.SamplingConfig{
 			Initial:    100,
 			Thereafter: 100,
 		},
 		Encoding:         option.printEncoding,
 		EncoderConfig: func() zapcore.EncoderConfig {
-			if option.isDev {
+			if isDev {
 				return zap.NewDevelopmentEncoderConfig()
 			} else {
 				return zap.NewProductionEncoderConfig()
@@ -102,7 +99,8 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 				return ""
 			}
 		}(),
-		isDev: option.isDev,
+		isDev: isDev,
+		isDebug: isDebug,
 	}
 }
 
@@ -112,6 +110,10 @@ func (zapInstance *ZapClass) Close() {
 
 func (zapInstance *ZapClass) IsDev() bool {
 	return zapInstance.isDev
+}
+
+func (zapInstance *ZapClass) IsDebug() bool {
+	return zapInstance.isDebug
 }
 
 func (zapInstance *ZapClass) FormatOutput(format string, args ...interface{}) string {
