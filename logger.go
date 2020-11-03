@@ -9,6 +9,7 @@ import (
 type ZapClass struct {
 	logger *zap.Logger
 	prefix string
+	isDev bool
 }
 
 var Logger = NewLogger("info")
@@ -101,11 +102,16 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 				return ""
 			}
 		}(),
+		isDev: option.isDev,
 	}
 }
 
 func (zapInstance *ZapClass) Close() {
 	zapInstance.logger.Sync()
+}
+
+func (zapInstance *ZapClass) IsDev() bool {
+	return zapInstance.isDev
 }
 
 func (zapInstance *ZapClass) FormatOutput(format string, args ...interface{}) string {
