@@ -2,7 +2,6 @@ package go_logger
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -120,17 +119,7 @@ func (zapInstance *ZapClass) IsDebug() bool {
 func (zapInstance *ZapClass) FormatOutput(format string, args ...interface{}) string {
 	result := ``
 	for _, arg := range args {
-		if err, ok := arg.(error); ok {
-			if _, ok := arg.(interface{
-				WithStack(err error) error
-			}); !ok {  // 如果是不带堆栈的err，则附加上堆栈
-				result += fmt.Sprintf(format, errors.WithStack(err)) + "   "
-			} else {
-				result += fmt.Sprintf(format, arg) + "   "
-			}
-		} else {
-			result += fmt.Sprintf(format, arg) + "   "
-		}
+		result += fmt.Sprintf(format, arg) + "   "
 	}
 	result = result[:len(result) - 3]
 	return result
