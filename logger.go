@@ -104,6 +104,15 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 	}
 }
 
+func (zapInstance *ZapClass) CloneWithPrefix(prefix string) *ZapClass {
+	return &ZapClass{
+		logger: zapInstance.logger,
+		prefix: fmt.Sprintf("[%s]: ", prefix),
+		isDev: zapInstance.isDev,
+		isDebug: zapInstance.isDebug,
+	}
+}
+
 func (zapInstance *ZapClass) Close() {
 	zapInstance.logger.Sync()
 }
