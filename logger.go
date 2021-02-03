@@ -21,6 +21,7 @@ type LoggerOption struct {
 	printEncoding string
 	level       string
 	prefix      string
+	outputFile string  // 日志输出文件
 }
 
 func WithPrintEncoding(printEncoding string) LoggerOptionFunc {
@@ -32,6 +33,12 @@ func WithPrintEncoding(printEncoding string) LoggerOptionFunc {
 func WithPrefix(prefix string) LoggerOptionFunc {
 	return func(option *LoggerOption) {
 		option.prefix = prefix
+	}
+}
+
+func WithOutputFile(filepath string) LoggerOptionFunc {
+	return func(option *LoggerOption) {
+		option.outputFile = filepath
 	}
 }
 
@@ -66,7 +73,10 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 	} else {
 		option.printEncoding = "console"
 	}
-
+	outputPaths := []string{"stdout"}
+	if option.outputFile != "" {
+		outputPaths = append(outputPaths, option.outputFile)
+	}
 	logger, err := zap.Config{
 		DisableCaller: true,
 		DisableStacktrace: true,
@@ -84,7 +94,7 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 				return zap.NewProductionEncoderConfig()
 			}
 		}(),
-		OutputPaths:      []string{"stderr"},
+		OutputPaths:      outputPaths,
 		ErrorOutputPaths: []string{"stderr"},
 	}.Build()
 	if err != nil {
