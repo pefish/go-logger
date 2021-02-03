@@ -22,7 +22,7 @@ func main() {
 	//if err != nil {
 	//	go_logger.Logger.Error(err)
 	//}
-	go_logger.Logger = go_logger.NewLogger("debug", go_logger.WithOutputFile("/Users/yunchuang/Work/backend/golang/go-logger/1.log"))
+	go_logger.Logger = go_logger.NewLogger("debug", go_logger.WithOutputFile("./1.log"))
 	go_logger.Logger.Info(111)
 	go_logger.Logger.Error(errors.New("123"))
 }
