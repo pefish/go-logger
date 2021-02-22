@@ -25,9 +25,9 @@ func ExampleNewLogger() {
 	Logger.Warn(123)
 	Logger.Error(errors.New(`111`))
 
-	Logger = NewLogger(`debug`, WithPrefix(`debug`))
-	var a error = nil
-	fmt.Println(a.Error())
+	logger1 := Logger.CloneWithPrefix("haha").CloneWithLevel("debug")
+	logger1.Debug(1.344, `debug`)
+	logger1.Warn(1.344, `warn`)
 	// Output:
 	// true
 	// false

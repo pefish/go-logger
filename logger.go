@@ -7,10 +7,12 @@ import (
 )
 
 type ZapClass struct {
+	opts *LoggerOption
 	logger *zap.Logger
-	prefix string
 	isDev bool  // 日志级别不是error、warn，则为开发模式
 	isDebug bool  // 日志级别不是error、warn、info，则为开发模式
+
+	prefix string
 }
 
 var Logger = NewLogger("info")
@@ -54,39 +56,40 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 		level:  level,
 		prefix: ``,
 	}
+	for _, o := range opts {
+		o(&option)
+	}
+	return newLogger(&option)
+}
+
+func newLogger(opts *LoggerOption) *ZapClass {
 	isDev := false
 	isDebug := false
-
-	if option.level != `error` && option.level != `warn` {
+	if opts.level != `error` && opts.level != `warn` {
 		isDev = true
-		if option.level != `info` {
+		if opts.level != `info` {
 			isDebug = true
 		}
 	}
 
-	for _, o := range opts {
-		o(&option)
-	}
-
+	printEncoding := "console"
 	if !isDev {
-		option.printEncoding = "json"
-	} else {
-		option.printEncoding = "console"
+		printEncoding = "json"
 	}
 	outputPaths := []string{"stdout"}
-	if option.outputFile != "" {
-		outputPaths = append(outputPaths, option.outputFile)
+	if opts.outputFile != "" {
+		outputPaths = append(outputPaths, opts.outputFile)
 	}
 	logger, err := zap.Config{
 		DisableCaller: true,
 		DisableStacktrace: true,
-		Level:       zap.NewAtomicLevelAt(errLevels[option.level]),
+		Level:       zap.NewAtomicLevelAt(errLevels[opts.level]),
 		Development: isDev,
 		Sampling: &zap.SamplingConfig{
 			Initial:    100,
 			Thereafter: 100,
 		},
-		Encoding:         option.printEncoding,
+		Encoding:         printEncoding,
 		EncoderConfig: func() zapcore.EncoderConfig {
 			if isDev {
 				return zap.NewDevelopmentEncoderConfig()
@@ -101,10 +104,11 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 		panic(err)
 	}
 	return &ZapClass{
+		opts: opts,
 		logger: logger,
 		prefix: func() string {
-			if option.prefix != "" {
-				return fmt.Sprintf("[%s]: ", option.prefix)
+			if opts.prefix != "" {
+				return fmt.Sprintf("[%s]: ", opts.prefix)
 			} else {
 				return ""
 			}
@@ -115,12 +119,13 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 }
 
 func (zapInstance *ZapClass) CloneWithPrefix(prefix string) *ZapClass {
-	return &ZapClass{
-		logger: zapInstance.logger,
-		prefix: fmt.Sprintf("[%s]: ", prefix),
-		isDev: zapInstance.isDev,
-		isDebug: zapInstance.isDebug,
-	}
+	zapInstance.opts.prefix = prefix
+	return newLogger(zapInstance.opts)
+}
+
+func (zapInstance *ZapClass) CloneWithLevel(level string) *ZapClass {
+	zapInstance.opts.level = level
+	return newLogger(zapInstance.opts)
 }
 
 func (zapInstance *ZapClass) Close() {
@@ -129,6 +134,10 @@ func (zapInstance *ZapClass) Close() {
 
 func (zapInstance *ZapClass) IsDev() bool {
 	return zapInstance.isDev
+}
+
+func (zapInstance *ZapClass) Opts() *LoggerOption {
+	return zapInstance.opts
 }
 
 func (zapInstance *ZapClass) IsDebug() bool {
