@@ -128,6 +128,11 @@ func (zapInstance *ZapClass) CloneWithLevel(level string) *ZapClass {
 	return newLogger(zapInstance.opts)
 }
 
+func (zapInstance *ZapClass) CloneWithOutputFile(filepath string) *ZapClass {
+	zapInstance.opts.outputFile = filepath
+	return newLogger(zapInstance.opts)
+}
+
 func (zapInstance *ZapClass) Close() {
 	zapInstance.logger.Sync()
 }
