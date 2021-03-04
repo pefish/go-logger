@@ -145,6 +145,9 @@ func (zapInstance *ZapClass) IsDebug() bool {
 }
 
 func (zapInstance *ZapClass) FormatOutput(format string, args ...interface{}) string {
+	if len(args) == 0 {
+		return ""
+	}
 	result := ``
 	for _, arg := range args {
 		result += fmt.Sprintf(format, arg) + "   "
