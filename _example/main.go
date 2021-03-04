@@ -27,3 +27,4 @@ func main() {
 	go_logger.Logger.Error(errors.New("123"))
 
 }
+
