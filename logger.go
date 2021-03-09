@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"time"
 )
 
 type ZapClass struct {
@@ -11,6 +12,7 @@ type ZapClass struct {
 	logger *zap.Logger
 	isDev bool  // 日志级别不是error、warn，则为开发模式
 	isDebug bool  // 日志级别不是error、warn、info，则为开发模式
+	zapConfig zap.Config
 
 	prefix string
 }
@@ -80,7 +82,7 @@ func newLogger(opts *LoggerOption) *ZapClass {
 	if opts.outputFile != "" {
 		outputPaths = append(outputPaths, opts.outputFile)
 	}
-	logger, err := zap.Config{
+	zapConfig := zap.Config{
 		DisableCaller: true,
 		DisableStacktrace: true,
 		Level:       zap.NewAtomicLevelAt(errLevels[opts.level]),
@@ -99,7 +101,8 @@ func newLogger(opts *LoggerOption) *ZapClass {
 		}(),
 		OutputPaths:      outputPaths,
 		ErrorOutputPaths: []string{"stderr"},
-	}.Build()
+	}
+	logger, err := zapConfig.Build()
 	if err != nil {
 		panic(err)
 	}
@@ -115,6 +118,7 @@ func newLogger(opts *LoggerOption) *ZapClass {
 		}(),
 		isDev: isDev,
 		isDebug: isDebug,
+		zapConfig: zapConfig,
 	}
 }
 
@@ -177,6 +181,11 @@ func (zapInstance *ZapClass) Info(args ...interface{}) {
 func (zapInstance *ZapClass) InfoF(format string, args ...interface{}) {
 	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
 	zapInstance.logger.Info(msg)
+}
+
+// 只支持 console 格式
+func (zapInstance *ZapClass) InfoFWithRewrite(format string, args ...interface{}) {
+	fmt.Printf("\r" + time.Now().Format("2006-01-02T15:04:05.000Z0700") + "\t" + zap.NewAtomicLevelAt(errLevels["info"]).Level().CapitalString() + "\t" + format, args...)
 }
 
 func (zapInstance *ZapClass) Warn(args ...interface{}) {

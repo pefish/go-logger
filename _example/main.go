@@ -3,6 +3,7 @@ package main
 import (
 	go_logger "github.com/pefish/go-logger"
 	"github.com/pkg/errors"
+	"time"
 )
 
 func test() error {
@@ -23,8 +24,11 @@ func main() {
 	//	go_logger.Logger.Error(err)
 	//}
 	go_logger.Logger = go_logger.NewLogger("debug")
-	go_logger.Logger.Info()
-	go_logger.Logger.Error(errors.New("123"))
-
+	go_logger.Logger.Info("haha")
+	for i := 0; i < 100; i++ {
+		go_logger.Logger.InfoFWithRewrite("%d", i)
+		//fmt.Printf("\r111%d", i)
+		time.Sleep(time.Second)
+	}
 }
 
