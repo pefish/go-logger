@@ -188,6 +188,11 @@ func (zapInstance *ZapClass) InfoFWithRewrite(format string, args ...interface{}
 	fmt.Printf("\r" + time.Now().Format("2006-01-02T15:04:05.000Z0700") + "\t" + zap.NewAtomicLevelAt(errLevels["info"]).Level().CapitalString() + "\t" + format, args...)
 }
 
+// 只支持 console 格式
+func (zapInstance *ZapClass) InfoFRaw(format string, args ...interface{}) {
+	fmt.Printf(format, args...)
+}
+
 func (zapInstance *ZapClass) Warn(args ...interface{}) {
 	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%v", args...))
 	zapInstance.logger.Warn(msg)
