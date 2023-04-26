@@ -5,10 +5,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func test() error {
-	return test3()
-}
-
 func test3() error {
 	return test1()
 }
