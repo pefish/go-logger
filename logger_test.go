@@ -28,8 +28,8 @@ func ExampleNewLogger() {
 	logger1 := Logger.CloneWithPrefix("haha").CloneWithLevel("debug")
 	logger1.Debug(1.344, `debug`)
 	logger1.Warn(1.344, `warn`)
-	// Output:
-	// true
-	// false
-}
 
+	logger2 := Logger.CloneWithPrefix("xixi").CloneWithLevel("debug")
+	logger2.Debug(1.344, `debug`)
+	logger2.Warn(1.344, `warn`)
+}

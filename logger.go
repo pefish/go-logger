@@ -8,10 +8,10 @@ import (
 )
 
 type ZapClass struct {
-	opts *LoggerOption
-	logger *zap.Logger
-	isDev bool  // 日志级别不是error、warn，则为开发模式
-	isDebug bool  // 日志级别不是error、warn、info，则为开发模式
+	opts      *LoggerOption
+	logger    *zap.Logger
+	isDev     bool // 日志级别不是error、warn，则为开发模式
+	isDebug   bool // 日志级别不是error、warn、info，则为开发模式
 	zapConfig zap.Config
 
 	prefix string
@@ -23,9 +23,9 @@ type LoggerOptionFunc func(options *LoggerOption)
 
 type LoggerOption struct {
 	printEncoding string
-	level       string
-	prefix      string
-	outputFile string  // 日志输出文件
+	level         string
+	prefix        string
+	outputFile    string // 日志输出文件
 }
 
 func WithPrintEncoding(printEncoding string) LoggerOptionFunc {
@@ -83,15 +83,15 @@ func newLogger(opts *LoggerOption) *ZapClass {
 		outputPaths = append(outputPaths, opts.outputFile)
 	}
 	zapConfig := zap.Config{
-		DisableCaller: true,
+		DisableCaller:     true,
 		DisableStacktrace: true,
-		Level:       zap.NewAtomicLevelAt(errLevels[opts.level]),
-		Development: isDev,
+		Level:             zap.NewAtomicLevelAt(errLevels[opts.level]),
+		Development:       isDev,
 		Sampling: &zap.SamplingConfig{
 			Initial:    100,
 			Thereafter: 100,
 		},
-		Encoding:         printEncoding,
+		Encoding: printEncoding,
 		EncoderConfig: func() zapcore.EncoderConfig {
 			if isDev {
 				return zap.NewDevelopmentEncoderConfig()
@@ -107,17 +107,17 @@ func newLogger(opts *LoggerOption) *ZapClass {
 		panic(err)
 	}
 	return &ZapClass{
-		opts: opts,
+		opts:   opts,
 		logger: logger,
-		prefix: func() string {
-			if opts.prefix != "" {
-				return fmt.Sprintf("[%s]: ", opts.prefix)
+		prefix: func(prefix string) string {
+			if prefix != "" {
+				return fmt.Sprintf("[%s]: ", prefix)
 			} else {
 				return ""
 			}
-		}(),
-		isDev: isDev,
-		isDebug: isDebug,
+		}(opts.prefix),
+		isDev:     isDev,
+		isDebug:   isDebug,
 		zapConfig: zapConfig,
 	}
 }
@@ -161,7 +161,7 @@ func (zapInstance *ZapClass) FormatOutput(format string, args ...interface{}) st
 	for _, arg := range args {
 		result += fmt.Sprintf(format, arg) + "   "
 	}
-	result = result[:len(result) - 3]
+	result = result[:len(result)-3]
 	return result
 }
 
@@ -185,7 +185,7 @@ func (zapInstance *ZapClass) InfoF(format string, args ...interface{}) {
 
 // 只支持 console 格式
 func (zapInstance *ZapClass) InfoFWithRewrite(format string, args ...interface{}) {
-	fmt.Printf("\r" + time.Now().Format("2006-01-02T15:04:05.000Z0700") + "\t" + zap.NewAtomicLevelAt(errLevels["info"]).Level().CapitalString() + "\t" + format, args...)
+	fmt.Printf("\r"+time.Now().Format("2006-01-02T15:04:05.000Z0700")+"\t"+zap.NewAtomicLevelAt(errLevels["info"]).Level().CapitalString()+"\t"+format, args...)
 }
 
 // 只支持 console 格式
