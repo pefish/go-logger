@@ -3,15 +3,10 @@ package go_logger
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"testing"
 )
 
-func ExampleNewLogger() {
-	defer func() {
-		if err := recover(); err != nil {
-			Logger.Error(err)
-		}
-	}()
-
+func TestLogger(t *testing.T) {
 	Logger = NewLogger(`debug`, WithPrefix(`debug`))
 	fmt.Println(Logger.IsDev())
 	Logger.Debug(1.344, `62562`)
@@ -32,4 +27,7 @@ func ExampleNewLogger() {
 	logger2 := Logger.CloneWithPrefix("xixi").CloneWithLevel("debug")
 	logger2.Debug(1.344, `debug`)
 	logger2.Warn(1.344, `warn`)
+
+	Logger.InfoFRaw("gsfga")
+	Logger.ErrorFRaw("test")
 }

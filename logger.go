@@ -173,6 +173,15 @@ func (zapInstance *ZapClass) DebugF(format string, args ...interface{}) {
 	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...)))
 }
 
+func (zapInstance *ZapClass) DebugFRaw(format string, args ...interface{}) {
+	level := zapInstance.Opts().level
+	if level == "info" || level == "warn" || level == "error" {
+		return
+	}
+	msg := fmt.Sprintf(format, args...)
+	fmt.Printf("DEBUG\t%s\n", msg)
+}
+
 func (zapInstance *ZapClass) Info(args ...interface{}) {
 	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%v", args...))
 	zapInstance.logger.Info(msg)
@@ -190,7 +199,12 @@ func (zapInstance *ZapClass) InfoFWithRewrite(format string, args ...interface{}
 
 // 只支持 console 格式
 func (zapInstance *ZapClass) InfoFRaw(format string, args ...interface{}) {
-	fmt.Printf(format, args...)
+	level := zapInstance.Opts().level
+	if level == "warn" || level == "error" {
+		return
+	}
+	msg := fmt.Sprintf(format, args...)
+	fmt.Printf("INFO\t%s\n", msg)
 }
 
 func (zapInstance *ZapClass) Warn(args ...interface{}) {
@@ -203,6 +217,15 @@ func (zapInstance *ZapClass) WarnF(format string, args ...interface{}) {
 	zapInstance.logger.Warn(msg)
 }
 
+func (zapInstance *ZapClass) WarnFRaw(format string, args ...interface{}) {
+	level := zapInstance.Opts().level
+	if level == "error" {
+		return
+	}
+	msg := fmt.Sprintf(format, args...)
+	fmt.Printf("WARN\t%s\n", msg)
+}
+
 func (zapInstance *ZapClass) Error(args ...interface{}) {
 	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%+v", args...))
 	zapInstance.logger.Error(msg)
@@ -211,4 +234,9 @@ func (zapInstance *ZapClass) Error(args ...interface{}) {
 func (zapInstance *ZapClass) ErrorF(format string, args ...interface{}) {
 	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
 	zapInstance.logger.Error(msg)
+}
+
+func (zapInstance *ZapClass) ErrorFRaw(format string, args ...interface{}) {
+	msg := fmt.Sprintf(format, args...)
+	fmt.Printf("ERROR\t%s\n", msg)
 }
