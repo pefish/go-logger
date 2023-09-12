@@ -9,6 +9,7 @@ type InterfaceLogger interface {
 	Close()
 	IsDev() bool
 	IsDebug() bool
+	FormatOutput(format string, args ...interface{}) string
 
 	Debug(args ...interface{})
 	DebugF(format string, args ...interface{})
@@ -21,9 +22,7 @@ type InterfaceLogger interface {
 }
 
 type loggerImpl struct {
-
 }
-
 
 var DefaultLogger = &loggerImpl{}
 
@@ -55,7 +54,6 @@ func (l *loggerImpl) DebugF(format string, args ...interface{}) {
 	fmt.Printf("[DEBUG] %s\n", fmt.Sprintf(format, args...))
 }
 
-
 func (l *loggerImpl) Info(args ...interface{}) {
 	fmt.Printf("[INFO] %s\n", formatOutput(args...))
 }
@@ -79,4 +77,3 @@ func (l *loggerImpl) Error(args ...interface{}) {
 func (l *loggerImpl) ErrorF(format string, args ...interface{}) {
 	fmt.Printf("[ERROR] %s\n%s", fmt.Sprintf(format, args...), string(debug.Stack()))
 }
-
