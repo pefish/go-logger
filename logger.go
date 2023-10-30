@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"sync"
 	"time"
 )
 
@@ -15,6 +16,7 @@ type ZapClass struct {
 	zapConfig zap.Config
 
 	prefix string
+	sync.Mutex
 }
 
 var Logger = NewLogger("info")
@@ -123,16 +125,22 @@ func newLogger(opts *LoggerOption) *ZapClass {
 }
 
 func (zapInstance *ZapClass) CloneWithPrefix(prefix string) *ZapClass {
+	defer zapInstance.Unlock()
+	zapInstance.Lock()
 	zapInstance.opts.prefix = prefix
 	return newLogger(zapInstance.opts)
 }
 
 func (zapInstance *ZapClass) CloneWithLevel(level string) *ZapClass {
+	defer zapInstance.Unlock()
+	zapInstance.Lock()
 	zapInstance.opts.level = level
 	return newLogger(zapInstance.opts)
 }
 
 func (zapInstance *ZapClass) CloneWithOutputFile(filepath string) *ZapClass {
+	defer zapInstance.Unlock()
+	zapInstance.Lock()
 	zapInstance.opts.outputFile = filepath
 	return newLogger(zapInstance.opts)
 }
