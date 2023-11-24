@@ -161,7 +161,11 @@ func (zapInstance *ZapClass) IsDebug() bool {
 	return zapInstance.isDebug
 }
 
-func (zapInstance *ZapClass) FormatOutput(format string, args ...interface{}) string {
+func (zapInstance *ZapClass) FormatOutput(args ...interface{}) string {
+	return zapInstance.formatOutput("%+v", args...)
+}
+
+func (zapInstance *ZapClass) formatOutput(format string, args ...interface{}) string {
 	if len(args) == 0 {
 		return ""
 	}
@@ -174,7 +178,7 @@ func (zapInstance *ZapClass) FormatOutput(format string, args ...interface{}) st
 }
 
 func (zapInstance *ZapClass) Debug(args ...interface{}) {
-	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%v", args...)))
+	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.formatOutput("%v", args...)))
 }
 
 func (zapInstance *ZapClass) DebugF(format string, args ...interface{}) {
@@ -191,7 +195,7 @@ func (zapInstance *ZapClass) DebugFRaw(format string, args ...interface{}) {
 }
 
 func (zapInstance *ZapClass) Info(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%v", args...))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.formatOutput("%v", args...))
 	zapInstance.logger.Info(msg)
 }
 
@@ -216,7 +220,7 @@ func (zapInstance *ZapClass) InfoFRaw(format string, args ...interface{}) {
 }
 
 func (zapInstance *ZapClass) Warn(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%v", args...))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.formatOutput("%v", args...))
 	zapInstance.logger.Warn(msg)
 }
 
@@ -235,7 +239,7 @@ func (zapInstance *ZapClass) WarnFRaw(format string, args ...interface{}) {
 }
 
 func (zapInstance *ZapClass) Error(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput("%+v", args...))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.formatOutput("%+v", args...))
 	zapInstance.logger.Error(msg)
 }
 
