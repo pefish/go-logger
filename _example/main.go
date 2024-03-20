@@ -21,4 +21,17 @@ func main() {
 	logger2 := go_logger.Logger.CloneWithPrefix("xixi")
 	logger2.Debug(1.344, `debug`)
 	logger2.Warn(1.344, `warn`)
+
+	logger2.Warn(
+		logger2.Sdump(map[string]interface{}{
+			"abc":   "abc",
+			"gsdfg": 232,
+		}),
+	)
+	logger2.InfoDump(
+		map[string]interface{}{
+			"abc":   "abc",
+			"gsdfg": 232,
+		},
+	)
 }

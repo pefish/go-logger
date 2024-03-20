@@ -2,10 +2,12 @@ package go_logger
 
 import (
 	"fmt"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"sync"
 	"time"
+
+	"github.com/davecgh/go-spew/spew"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type ZapClass struct {
@@ -165,6 +167,11 @@ func (zapInstance *ZapClass) FormatOutput(args ...interface{}) string {
 	return zapInstance.formatOutput("%+v", args...)
 }
 
+// 更加全面
+func (zapInstance *ZapClass) Sdump(args ...interface{}) string {
+	return spew.Sdump(args...)
+}
+
 func (zapInstance *ZapClass) formatOutput(format string, args ...interface{}) string {
 	if len(args) == 0 {
 		return ""
@@ -178,7 +185,7 @@ func (zapInstance *ZapClass) formatOutput(format string, args ...interface{}) st
 }
 
 func (zapInstance *ZapClass) Debug(args ...interface{}) {
-	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.formatOutput("%v", args...)))
+	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...)))
 }
 
 func (zapInstance *ZapClass) DebugF(format string, args ...interface{}) {
@@ -190,12 +197,16 @@ func (zapInstance *ZapClass) DebugFRaw(format string, args ...interface{}) {
 	if level == "info" || level == "warn" || level == "error" {
 		return
 	}
-	msg := fmt.Sprintf(format, args...)
-	fmt.Printf("DEBUG\t%s\n", msg)
+	fmt.Printf("DEBUG\t%s\n", fmt.Sprintf(format, args...))
 }
 
 func (zapInstance *ZapClass) Info(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.formatOutput("%v", args...))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
+	zapInstance.logger.Info(msg)
+}
+
+func (zapInstance *ZapClass) InfoDump(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.Sdump(args...))
 	zapInstance.logger.Info(msg)
 }
 
@@ -215,12 +226,11 @@ func (zapInstance *ZapClass) InfoFRaw(format string, args ...interface{}) {
 	if level == "warn" || level == "error" {
 		return
 	}
-	msg := fmt.Sprintf(format, args...)
-	fmt.Printf("INFO\t%s\n", msg)
+	fmt.Printf("INFO\t%s\n", fmt.Sprintf(format, args...))
 }
 
 func (zapInstance *ZapClass) Warn(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.formatOutput("%v", args...))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
 	zapInstance.logger.Warn(msg)
 }
 
@@ -234,12 +244,11 @@ func (zapInstance *ZapClass) WarnFRaw(format string, args ...interface{}) {
 	if level == "error" {
 		return
 	}
-	msg := fmt.Sprintf(format, args...)
-	fmt.Printf("WARN\t%s\n", msg)
+	fmt.Printf("WARN\t%s\n", fmt.Sprintf(format, args...))
 }
 
 func (zapInstance *ZapClass) Error(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.formatOutput("%+v", args...))
+	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
 	zapInstance.logger.Error(msg)
 }
 
@@ -249,6 +258,5 @@ func (zapInstance *ZapClass) ErrorF(format string, args ...interface{}) {
 }
 
 func (zapInstance *ZapClass) ErrorFRaw(format string, args ...interface{}) {
-	msg := fmt.Sprintf(format, args...)
-	fmt.Printf("ERROR\t%s\n", msg)
+	fmt.Printf("ERROR\t%s\n", fmt.Sprintf(format, args...))
 }
