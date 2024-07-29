@@ -6,28 +6,27 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
+	t_logger "github.com/pefish/go-interface/t-logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-type ZapClass struct {
+type LoggerType struct {
 	opts      *LoggerOption
 	logger    *zap.Logger
-	isDev     bool // 日志级别不是error、warn，则为开发模式
-	isDebug   bool // 日志级别不是error、warn、info，则为开发模式
 	zapConfig zap.Config
 
 	prefix string
 	sync.Mutex
 }
 
-var Logger = NewLogger("info")
+var Logger = NewLogger(t_logger.Level_INFO)
 
 type LoggerOptionFunc func(options *LoggerOption)
 
 type LoggerOption struct {
 	printEncoding string
-	level         string
+	level         t_logger.Level
 	prefix        string
 	outputFile    string // 日志输出文件
 }
@@ -50,14 +49,14 @@ func WithOutputFile(filepath string) LoggerOptionFunc {
 	}
 }
 
-var errLevels = map[string]zapcore.Level{
-	`debug`: zap.DebugLevel,
-	`info`:  zap.InfoLevel,
-	`warn`:  zap.WarnLevel,
-	`error`: zap.ErrorLevel,
+var errLevels = map[t_logger.Level]zapcore.Level{
+	t_logger.Level_DEBUG: zap.DebugLevel,
+	t_logger.Level_INFO:  zap.InfoLevel,
+	t_logger.Level_WARN:  zap.WarnLevel,
+	t_logger.Level_ERROR: zap.ErrorLevel,
 }
 
-func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
+func NewLogger(level t_logger.Level, opts ...LoggerOptionFunc) *LoggerType {
 	option := LoggerOption{
 		level:  level,
 		prefix: ``,
@@ -68,14 +67,10 @@ func NewLogger(level string, opts ...LoggerOptionFunc) *ZapClass {
 	return newLogger(&option)
 }
 
-func newLogger(opts *LoggerOption) *ZapClass {
+func newLogger(opts *LoggerOption) *LoggerType {
 	isDev := false
-	isDebug := false
 	if opts.level != `error` && opts.level != `warn` {
 		isDev = true
-		if opts.level != `info` {
-			isDebug = true
-		}
 	}
 
 	printEncoding := "console"
@@ -110,7 +105,7 @@ func newLogger(opts *LoggerOption) *ZapClass {
 	if err != nil {
 		panic(err)
 	}
-	return &ZapClass{
+	return &LoggerType{
 		opts:   opts,
 		logger: logger,
 		prefix: func(prefix string) string {
@@ -120,59 +115,49 @@ func newLogger(opts *LoggerOption) *ZapClass {
 				return ""
 			}
 		}(opts.prefix),
-		isDev:     isDev,
-		isDebug:   isDebug,
 		zapConfig: zapConfig,
 	}
 }
 
-func (zapInstance *ZapClass) CloneWithPrefix(prefix string) *ZapClass {
-	defer zapInstance.Unlock()
-	zapInstance.Lock()
-	zapInstance.opts.prefix = prefix
-	return newLogger(zapInstance.opts)
+func (l *LoggerType) CloneWithPrefix(prefix string) *LoggerType {
+	defer l.Unlock()
+	l.Lock()
+	l.opts.prefix = prefix
+	return newLogger(l.opts)
 }
 
-func (zapInstance *ZapClass) CloneWithLevel(level string) *ZapClass {
-	defer zapInstance.Unlock()
-	zapInstance.Lock()
-	zapInstance.opts.level = level
-	return newLogger(zapInstance.opts)
+func (l *LoggerType) CloneWithLevel(level t_logger.Level) *LoggerType {
+	defer l.Unlock()
+	l.Lock()
+	l.opts.level = level
+	return newLogger(l.opts)
 }
 
-func (zapInstance *ZapClass) CloneWithOutputFile(filepath string) *ZapClass {
-	defer zapInstance.Unlock()
-	zapInstance.Lock()
-	zapInstance.opts.outputFile = filepath
-	return newLogger(zapInstance.opts)
+func (l *LoggerType) CloneWithOutputFile(filepath string) *LoggerType {
+	defer l.Unlock()
+	l.Lock()
+	l.opts.outputFile = filepath
+	return newLogger(l.opts)
 }
 
-func (zapInstance *ZapClass) Close() {
-	zapInstance.logger.Sync()
+func (l *LoggerType) Opts() *LoggerOption {
+	return l.opts
 }
 
-func (zapInstance *ZapClass) IsDev() bool {
-	return zapInstance.isDev
+func (l *LoggerType) Level() t_logger.Level {
+	return l.opts.level
 }
 
-func (zapInstance *ZapClass) Opts() *LoggerOption {
-	return zapInstance.opts
-}
-
-func (zapInstance *ZapClass) IsDebug() bool {
-	return zapInstance.isDebug
-}
-
-func (zapInstance *ZapClass) FormatOutput(args ...interface{}) string {
-	return zapInstance.formatOutput("%+v", args...)
+func (l *LoggerType) FormatOutput(args ...interface{}) string {
+	return l.formatOutput("%+v", args...)
 }
 
 // 更加全面
-func (zapInstance *ZapClass) Sdump(args ...interface{}) string {
+func (l *LoggerType) Sdump(args ...interface{}) string {
 	return spew.Sdump(args...)
 }
 
-func (zapInstance *ZapClass) formatOutput(format string, args ...interface{}) string {
+func (l *LoggerType) formatOutput(format string, args ...interface{}) string {
 	if len(args) == 0 {
 		return ""
 	}
@@ -184,79 +169,79 @@ func (zapInstance *ZapClass) formatOutput(format string, args ...interface{}) st
 	return result
 }
 
-func (zapInstance *ZapClass) Debug(args ...interface{}) {
-	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...)))
+func (l *LoggerType) Debug(args ...interface{}) {
+	l.logger.Debug(fmt.Sprintf("%s%s", l.prefix, l.FormatOutput(args...)))
 }
 
-func (zapInstance *ZapClass) DebugF(format string, args ...interface{}) {
-	zapInstance.logger.Debug(fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...)))
+func (l *LoggerType) DebugF(format string, args ...interface{}) {
+	l.logger.Debug(fmt.Sprintf("%s%s", l.prefix, fmt.Sprintf(format, args...)))
 }
 
-func (zapInstance *ZapClass) DebugFRaw(format string, args ...interface{}) {
-	level := zapInstance.Opts().level
+func (l *LoggerType) DebugFRaw(format string, args ...interface{}) {
+	level := l.Opts().level
 	if level == "info" || level == "warn" || level == "error" {
 		return
 	}
 	fmt.Printf("DEBUG\t%s\n", fmt.Sprintf(format, args...))
 }
 
-func (zapInstance *ZapClass) Info(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
-	zapInstance.logger.Info(msg)
+func (l *LoggerType) Info(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", l.prefix, l.FormatOutput(args...))
+	l.logger.Info(msg)
 }
 
-func (zapInstance *ZapClass) InfoDump(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.Sdump(args...))
-	zapInstance.logger.Info(msg)
+func (l *LoggerType) InfoDump(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", l.prefix, l.Sdump(args...))
+	l.logger.Info(msg)
 }
 
-func (zapInstance *ZapClass) InfoF(format string, args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
-	zapInstance.logger.Info(msg)
+func (l *LoggerType) InfoF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", l.prefix, fmt.Sprintf(format, args...))
+	l.logger.Info(msg)
 }
 
 // 只支持 console 格式
-func (zapInstance *ZapClass) InfoFWithRewrite(format string, args ...interface{}) {
+func (l *LoggerType) InfoFWithRewrite(format string, args ...interface{}) {
 	fmt.Printf("\r"+time.Now().Format("2006-01-02T15:04:05.000Z0700")+"\t"+zap.NewAtomicLevelAt(errLevels["info"]).Level().CapitalString()+"\t"+format, args...)
 }
 
 // 只支持 console 格式
-func (zapInstance *ZapClass) InfoFRaw(format string, args ...interface{}) {
-	level := zapInstance.Opts().level
+func (l *LoggerType) InfoFRaw(format string, args ...interface{}) {
+	level := l.Opts().level
 	if level == "warn" || level == "error" {
 		return
 	}
 	fmt.Printf("INFO\t%s\n", fmt.Sprintf(format, args...))
 }
 
-func (zapInstance *ZapClass) Warn(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
-	zapInstance.logger.Warn(msg)
+func (l *LoggerType) Warn(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", l.prefix, l.FormatOutput(args...))
+	l.logger.Warn(msg)
 }
 
-func (zapInstance *ZapClass) WarnF(format string, args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
-	zapInstance.logger.Warn(msg)
+func (l *LoggerType) WarnF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", l.prefix, fmt.Sprintf(format, args...))
+	l.logger.Warn(msg)
 }
 
-func (zapInstance *ZapClass) WarnFRaw(format string, args ...interface{}) {
-	level := zapInstance.Opts().level
+func (l *LoggerType) WarnFRaw(format string, args ...interface{}) {
+	level := l.Opts().level
 	if level == "error" {
 		return
 	}
 	fmt.Printf("WARN\t%s\n", fmt.Sprintf(format, args...))
 }
 
-func (zapInstance *ZapClass) Error(args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, zapInstance.FormatOutput(args...))
-	zapInstance.logger.Error(msg)
+func (l *LoggerType) Error(args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", l.prefix, l.FormatOutput(args...))
+	l.logger.Error(msg)
 }
 
-func (zapInstance *ZapClass) ErrorF(format string, args ...interface{}) {
-	msg := fmt.Sprintf("%s%s", zapInstance.prefix, fmt.Sprintf(format, args...))
-	zapInstance.logger.Error(msg)
+func (l *LoggerType) ErrorF(format string, args ...interface{}) {
+	msg := fmt.Sprintf("%s%s", l.prefix, fmt.Sprintf(format, args...))
+	l.logger.Error(msg)
 }
 
-func (zapInstance *ZapClass) ErrorFRaw(format string, args ...interface{}) {
+func (l *LoggerType) ErrorFRaw(format string, args ...interface{}) {
 	fmt.Printf("ERROR\t%s\n", fmt.Sprintf(format, args...))
 }
