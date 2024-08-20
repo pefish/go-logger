@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
+	i_logger "github.com/pefish/go-interface/i-logger"
 	t_logger "github.com/pefish/go-interface/t-logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -119,21 +120,21 @@ func newLogger(opts *LoggerOption) *LoggerType {
 	}
 }
 
-func (l *LoggerType) CloneWithPrefix(prefix string) *LoggerType {
+func (l *LoggerType) CloneWithPrefix(prefix string) i_logger.ILogger {
 	defer l.Unlock()
 	l.Lock()
 	l.opts.prefix = prefix
 	return newLogger(l.opts)
 }
 
-func (l *LoggerType) CloneWithLevel(level t_logger.Level) *LoggerType {
+func (l *LoggerType) CloneWithLevel(level t_logger.Level) i_logger.ILogger {
 	defer l.Unlock()
 	l.Lock()
 	l.opts.level = level
 	return newLogger(l.opts)
 }
 
-func (l *LoggerType) CloneWithOutputFile(filepath string) *LoggerType {
+func (l *LoggerType) CloneWithOutputFile(filepath string) i_logger.ILogger {
 	defer l.Unlock()
 	l.Lock()
 	l.opts.outputFile = filepath
