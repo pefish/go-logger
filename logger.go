@@ -21,8 +21,6 @@ type LoggerType struct {
 	sync.Mutex
 }
 
-var Logger = NewLogger(t_logger.Level_INFO)
-
 type LoggerOptionFunc func(options *LoggerOption)
 
 type LoggerOption struct {
